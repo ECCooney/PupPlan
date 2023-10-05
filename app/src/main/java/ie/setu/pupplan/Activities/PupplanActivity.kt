@@ -16,29 +16,33 @@ class PupplanActivity : AppCompatActivity() {
 
 //    bring in data model
     var location = PupplanModel()
+    val locations = ArrayList<PupplanModel>()
 
 //    main function
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
 //     inflater takes an XML file as input and builds the View objects from it
         binding = ActivityPupplanBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
 //      logging
         Timber.plant(Timber.DebugTree() )
-
         i("Placemark Activity started..")
 
-        binding.btnAdd.setOnClickListener()
-        val locationTitle = binding.locationTitle.text.toString()
-        if (locationTitle.isNotEmpty()) {
-            i("add Button Pressed: $locationTitle")
-        }
-        else {
-            Snackbar
-                .make(it,"Please Enter a title", Snackbar.LENGTH_LONG)
-                .show()
+        binding.btnAdd.setOnClickListener(){
+            location.title = binding.locationTitle.text.toString()
+            location.description = binding.locationDescription.text.toString()
+            if (location.title.isNotEmpty()) {
+                locations.add(location.copy())
+                i("add Button Pressed: $location.title")
+//                iterates through the indices of the locations list and logs a message for each location, including its index within the list. It will print the location and its corresponding index.
+                for (i in locations.indices)
+                { i("Location[$i]:${this.locations[i]}") }
+            }
+            else {
+                Snackbar
+                    .make(it, "Please Enter a title", Snackbar.LENGTH_LONG)
+                    .show()
+            }
         }
     }
 }

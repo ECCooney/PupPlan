@@ -2,4 +2,5 @@
     <string name="app_name">PupPlan</string>
     <string name="button_addLocation">Add Your Stop</string>
     <string name="hint_locationTitle">Location</string>
+    <string name="hint_locationDescription">Description</string>
 </resources>
