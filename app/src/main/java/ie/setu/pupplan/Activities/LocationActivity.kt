@@ -39,6 +39,8 @@ class LocationActivity : AppCompatActivity() {
 //                iterates through the indices of the locations list and logs a message for each location, including its index within the list. It will print the location and its corresponding index.
                 for (i in app.locations.indices)
                 { i("Location[$i]:${this.app.locations[i]}") }
+                setResult(RESULT_OK)
+                finish()
             }
             else {
                 Snackbar

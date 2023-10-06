@@ -3,4 +3,7 @@
     <string name="button_addLocation">Add Your Stop</string>
     <string name="hint_locationTitle">Location</string>
     <string name="hint_locationDescription">Description</string>
+    <string name="hint_locationCategory">Category</string>
+    <string name="menu_addLocation">Add</string>
+    <string name="menu_cancelLocation">Cancel</string>
 </resources>
