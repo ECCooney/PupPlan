@@ -1,4 +1,4 @@
-package ie.setu.pupplan.Models
+package ie.setu.pupplan.models
 
 data class LocationModel(var title: String = "",
                          var description: String = "",

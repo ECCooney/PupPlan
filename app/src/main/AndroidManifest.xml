@@ -14,7 +14,7 @@
         android:theme="@style/Theme.PupPlan"
         tools:targetApi="31">
         <activity
-            android:name=".Activities.LocationsListActivity"
+            android:name=".activities.LocationListActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,7 +25,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".Activities.LocationActivity"
+            android:name=".activities.LocationActivity"
             android:exported="true">
             <meta-data android:name="android.app.lib_name"
                 android:value="" />

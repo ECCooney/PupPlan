@@ -1,31 +1,29 @@
-package ie.setu.pupplan.Activities
+package ie.setu.pupplan.activities
 
 import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
-import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import ie.setu.pupplan.Models.LocationModel
 import ie.setu.pupplan.R
-import ie.setu.pupplan.databinding.ActivityLocationsListBinding
-import ie.setu.pupplan.databinding.CardLocationBinding
+import ie.setu.pupplan.adapters.LocationAdapter
+import ie.setu.pupplan.adapters.LocationListener
+import ie.setu.pupplan.databinding.ActivityLocationListBinding
 import ie.setu.pupplan.main.MainApp
+import ie.setu.pupplan.models.LocationModel
 
-class LocationsListActivity : AppCompatActivity(){
+class LocationListActivity : AppCompatActivity(), LocationListener {
 //retrieving a reference to mainapp
     lateinit var app: MainApp
-    private lateinit var binding: ActivityLocationsListBinding
+    private lateinit var binding: ActivityLocationListBinding
 
 //override rules are available here for clarity https://www.geeksforgeeks.org/overriding-rules-in-kotlin/
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityLocationsListBinding.inflate(layoutInflater)
+        binding = ActivityLocationListBinding.inflate(layoutInflater)
         setContentView(binding.root)
         //enabling the action bar for the top menu
         binding.toolbar.title = title
@@ -36,7 +34,7 @@ class LocationsListActivity : AppCompatActivity(){
 
         val layoutManager = LinearLayoutManager(this)
         binding.recyclerView.layoutManager = layoutManager
-        binding.recyclerView.adapter = LocationAdapter(app.locations)
+        binding.recyclerView.adapter = LocationAdapter(app.locations.findAll(), this)
 
     }
 //    override the method to load the menu resource:
@@ -62,38 +60,23 @@ class LocationsListActivity : AppCompatActivity(){
         ) {
             if (it.resultCode == Activity.RESULT_OK) {
                 (binding.recyclerView.adapter)?.
-                notifyItemRangeChanged(0,app.locations.size)
+                notifyItemRangeChanged(0,app.locations.findAll().size)
             }
         }
-}
-// below class is designed to work with a RecyclerView to display a
-// list of LocationModel objects in a user interface.
-// It handles creating view holders, binding data to them, and determining the number of items in the list.
-// To use this adapter, you would typically set it as
-// the adapter for a RecyclerView and provide a list of LocationModel objects to display.
-class LocationAdapter constructor(private var locations: List<LocationModel>) :
-    RecyclerView.Adapter<LocationAdapter.MainHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainHolder {
-        val binding = CardLocationBinding
-            .inflate(LayoutInflater.from(parent.context), parent, false)
-
-        return MainHolder(binding)
+    override fun onLocationClick(location: LocationModel) {
+        val launcherIntent = Intent(this, LocationActivity::class.java)
+        getClickResult.launch(launcherIntent)
     }
 
-    override fun onBindViewHolder(holder: MainHolder, position: Int) {
-        val location = locations[holder.adapterPosition]
-        holder.bind(location)
-    }
-
-    override fun getItemCount(): Int = locations.size
-
-    class MainHolder(private val binding : CardLocationBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-
-        fun bind(location: LocationModel) {
-            binding.locationTitle.text = location.title
-            binding.description.text = location.description
+    private val getClickResult =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                (binding.recyclerView.adapter)?.
+                notifyItemRangeChanged(0,app.locations.findAll().size)
+            }
         }
-    }
+
 }
