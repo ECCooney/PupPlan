@@ -66,6 +66,8 @@ class LocationListActivity : AppCompatActivity(), LocationListener {
 
     override fun onLocationClick(location: LocationModel) {
         val launcherIntent = Intent(this, LocationActivity::class.java)
+        //pass the selected location to the activity (this is enabled by parcelable)
+        launcherIntent.putExtra("location_edit", location)
         getClickResult.launch(launcherIntent)
     }
 

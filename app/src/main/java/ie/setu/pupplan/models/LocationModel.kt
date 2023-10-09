@@ -1,6 +1,11 @@
 package ie.setu.pupplan.models
 
-data class LocationModel(var title: String = "",
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
+data class LocationModel(var id: Long = 0,
+                         var title: String = "",
                          var description: String = "",
 //                        var locationCategory: String = "",
 //                        var lat: Double = 00.00,
@@ -9,4 +14,4 @@ data class LocationModel(var title: String = "",
 //                        var closingTime: Double = 00.00,
 //                        var userId: String? = "",
 //                        var images:
-)
+): Parcelable

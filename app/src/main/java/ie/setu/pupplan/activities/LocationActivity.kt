@@ -36,6 +36,13 @@ class LocationActivity : AppCompatActivity() {
         app = application as MainApp
         i("Location Activity started...")
 
+//retrieve the placemark which was passed into the onlocationclick method in listactivity
+        if (intent.hasExtra("location_edit")) {
+            location = intent.extras?.getParcelable("location_edit")!!
+            binding.locationTitle.setText(location.title)
+            binding.locationDescription.setText(location.description)
+        }
+
         binding.btnAdd.setOnClickListener(){
             location.title = binding.locationTitle.text.toString()
             location.description = binding.locationDescription.text.toString()
