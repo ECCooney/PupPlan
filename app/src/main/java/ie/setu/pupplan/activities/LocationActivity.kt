@@ -24,7 +24,8 @@ class LocationActivity : AppCompatActivity() {
 
 //    main function
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+
+    super.onCreate(savedInstanceState)
 //     inflater takes an XML file as input and builds the View objects from it
         binding = ActivityLocationBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -36,26 +37,36 @@ class LocationActivity : AppCompatActivity() {
         app = application as MainApp
         i("Location Activity started...")
 
+        var edit = false
+
 //retrieve the placemark which was passed into the onlocationclick method in listactivity
         if (intent.hasExtra("location_edit")) {
+            edit = true
             location = intent.extras?.getParcelable("location_edit")!!
             binding.locationTitle.setText(location.title)
             binding.locationDescription.setText(location.description)
+            binding.btnAdd.setText(R.string.save_location)
         }
 
         binding.btnAdd.setOnClickListener(){
             location.title = binding.locationTitle.text.toString()
             location.description = binding.locationDescription.text.toString()
-            if (location.title.isNotEmpty()) {
-                app.locations.create(location.copy())
-                setResult(RESULT_OK)
-                finish()
-            }
-            else {
+            if (location.title.isEmpty()) {
                 Snackbar
-                    .make(it, "Please Enter a title", Snackbar.LENGTH_LONG)
+                    .make(it, R.string.enter_location_title, Snackbar.LENGTH_LONG)
                     .show()
             }
+            else {
+                if (edit) {
+                    app.locations.update(location.copy())
+                }
+                else{
+                    app.locations.create(location.copy())
+                }
+
+            }
+            setResult(RESULT_OK)
+            finish()
         }
     }
 
