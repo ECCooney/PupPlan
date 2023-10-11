@@ -6,4 +6,6 @@
     <string name="hint_locationCategory">Category</string>
     <string name="menu_addLocation">Add</string>
     <string name="menu_cancelLocation">Cancel</string>
+    <string name="enter_location_title"> Please enter Your Location\'s Name </string>
+    <string name="save_location"> Save Location </string>
 </resources>
