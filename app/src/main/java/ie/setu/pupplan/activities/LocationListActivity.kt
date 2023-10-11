@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.recyclerview.widget.LinearLayoutManager
 import ie.setu.pupplan.R
 import ie.setu.pupplan.adapters.LocationAdapter
@@ -22,15 +23,16 @@ class LocationListActivity : AppCompatActivity(), LocationListener {
 
 //override rules are available here for clarity https://www.geeksforgeeks.org/overriding-rules-in-kotlin/
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         binding = ActivityLocationListBinding.inflate(layoutInflater)
         setContentView(binding.root)
         //enabling the action bar for the top menu
         binding.toolbar.title = title
         setSupportActionBar(binding.toolbar)
-
 //The Application class in Android is the base class within an Android app that contains all other components such as activities and services. The Application class, or any subclass of the Application class, is instantiated before any other class when the process for your application/package is created.
         app = application as MainApp
+
 
         val layoutManager = LinearLayoutManager(this)
         binding.recyclerView.layoutManager = layoutManager
