@@ -25,6 +25,7 @@ class LocationMemStore : LocationStore {
         if (foundLocation != null) {
             foundLocation.title = location.title
             foundLocation.description = location.description
+            foundLocation.image= location.image
             logAll()
         }
     }
