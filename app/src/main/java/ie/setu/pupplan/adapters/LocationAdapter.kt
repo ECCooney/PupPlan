@@ -3,6 +3,7 @@ package ie.setu.pupplan.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
 import ie.setu.pupplan.databinding.CardLocationBinding
 import ie.setu.pupplan.models.LocationModel
 
@@ -41,7 +42,10 @@ class LocationAdapter constructor(private var locations: List<LocationModel>,
         fun bind(location: LocationModel, listener: LocationListener) {
             binding.locationTitle.text = location.title
             binding.description.text = location.description
+            Picasso.get().load(location.image).resize(200,200).into(binding.imageIcon)
             binding.root.setOnClickListener { listener.onLocationClick(location) }
         }
     }
+
+
 }

@@ -1,6 +1,7 @@
 package ie.setu.pupplan.activities
 
 import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
@@ -54,6 +55,9 @@ class LocationActivity : AppCompatActivity() {
             Picasso.get()
                 .load(location.image)
                 .into(binding.locationImage)
+            if (location.image != Uri.EMPTY) {
+                binding.chooseImage.setText(R.string.change_location_image)
+            }
         }
 
         binding.btnAdd.setOnClickListener(){
@@ -113,6 +117,7 @@ class LocationActivity : AppCompatActivity() {
                             Picasso.get()
                                 .load(location.image)
                                 .into(binding.locationImage)
+                            binding.chooseImage.setText(R.string.change_location_image)
                         } // end of if
                     }
                     RESULT_CANCELED -> { } else -> { }
