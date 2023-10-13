@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">PupPlan</string>
+<!--    adding a location-->
     <string name="button_addLocation">Add Your Stop</string>
     <string name="hint_locationTitle">Location</string>
     <string name="hint_locationDescription">Description</string>
@@ -8,4 +9,9 @@
     <string name="menu_cancelLocation">Cancel</string>
     <string name="enter_location_title"> Please enter Your Location\'s Name </string>
     <string name="save_location"> Save Location </string>
+
+<!--    photos-->
+    <string name="button_addImage"> Add Image </string>
+    <string name="select_location_image">Select location image</string>
+
 </resources>

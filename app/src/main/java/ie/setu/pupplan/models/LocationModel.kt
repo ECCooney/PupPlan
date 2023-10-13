@@ -1,5 +1,6 @@
 package ie.setu.pupplan.models
 
+import android.net.Uri
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
@@ -13,5 +14,5 @@ data class LocationModel(var id: Long = 0,
 //                        var openingTime: Double = 00.00,
 //                        var closingTime: Double = 00.00,
 //                        var userId: String? = "",
-//                        var images:
+                          var image: Uri = Uri.EMPTY
 ): Parcelable
