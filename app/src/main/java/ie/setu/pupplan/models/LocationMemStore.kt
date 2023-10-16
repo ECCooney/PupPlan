@@ -26,6 +26,7 @@ class LocationMemStore : LocationStore {
             foundLocation.title = location.title
             foundLocation.description = location.description
             foundLocation.image= location.image
+            foundLocation.locationCategory = location.locationCategory
             logAll()
         }
     }
