@@ -16,7 +16,9 @@ import ie.setu.pupplan.R
 import ie.setu.pupplan.databinding.ActivityMapBinding
 import ie.setu.pupplan.models.Address
 
-class MapActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerDragListener {
+class MapActivity : AppCompatActivity(), OnMapReadyCallback,
+            GoogleMap.OnMarkerDragListener,
+            GoogleMap.OnMarkerClickListener{
 
     private lateinit var map: GoogleMap
     private lateinit var binding: ActivityMapBinding
@@ -54,7 +56,9 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerD
             .position(addrss)
         map.addMarker(options)
         map.setOnMarkerDragListener(this)
+        map.setOnMarkerClickListener(this)
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(addrss, address.zoom))
+
     }
 
     override fun onMarkerDrag(p0: Marker) {}
@@ -73,5 +77,11 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerD
         setResult(Activity.RESULT_OK, resultIntent)
         finish()
         super.onBackPressed()
+    }
+
+    override fun onMarkerClick(marker: Marker): Boolean {
+        val addrss = LatLng(address.lat, address.lng)
+        marker.snippet = "GPS : $addrss"
+        return false
     }
 }

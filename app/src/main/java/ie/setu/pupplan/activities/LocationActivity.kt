@@ -30,7 +30,7 @@ class LocationActivity : AppCompatActivity() {
     var location = LocationModel()
 //reference to the main app object (lateinit overrules null safety checks)
     lateinit var app : MainApp
-    var address = Address(52.245696, -7.139102, 15f)
+//    var address = Address(52.245696, -7.139102, 15f)
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -94,6 +94,11 @@ class LocationActivity : AppCompatActivity() {
 
         binding.locationAddress.setOnClickListener {
             val address = Address(52.245696, -7.139102, 15f)
+            if (location.zoom != 0f) {
+                address.lat =  location.lat
+                address.lng = location.lng
+                address.zoom = location.zoom
+            }
             val launcherIntent = Intent(this, MapActivity::class.java)
                 .putExtra("address", address)
             mapIntentLauncher.launch(launcherIntent)
@@ -147,8 +152,11 @@ class LocationActivity : AppCompatActivity() {
                     RESULT_OK -> {
                         if (result.data != null) {
                             i("Got Address ${result.data.toString()}")
-                            address = result.data!!.extras?.getParcelable("address")!!
+                            val address = result.data!!.extras?.getParcelable<Address>("address")!!
                             i("Address == $address")
+                            location.lat = address.lat
+                            location.lng = address.lng
+                            location.zoom = address.zoom
                         } // end of if
                     }
                     RESULT_CANCELED -> { } else -> { }
