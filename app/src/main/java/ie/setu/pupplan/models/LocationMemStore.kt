@@ -27,6 +27,8 @@ class LocationMemStore : LocationStore {
             foundLocation.description = location.description
             foundLocation.image= location.image
             foundLocation.locationCategory = location.locationCategory
+            foundLocation.openingTime = location.openingTime
+            foundLocation.closingTime = location.closingTime
             foundLocation.lat = location.lat
             foundLocation.lng = location.lng
             foundLocation.zoom = location.zoom

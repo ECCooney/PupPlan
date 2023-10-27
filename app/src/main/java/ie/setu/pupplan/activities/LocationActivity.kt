@@ -87,7 +87,7 @@ class LocationActivity : AppCompatActivity() {
         }
         binding.chooseImage.setOnClickListener(){
     //showImagePicker coming from helpers
-            showImagePicker(imageIntentLauncher)
+            showImagePicker(imageIntentLauncher, this)
             i("Select image") }
 
         registerImagePickerCallback()
@@ -132,7 +132,12 @@ class LocationActivity : AppCompatActivity() {
                     RESULT_OK -> {
                         if (result.data != null) {
                             i("Got Result ${result.data!!.data}")
-                            location.image = result.data!!.data!!
+
+                            val image = result.data!!.data!!
+                            contentResolver.takePersistableUriPermission(image,
+                                Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            location.image = image
+
                             Picasso.get()
                                 .load(location.image)
                                 .into(binding.locationImage)
