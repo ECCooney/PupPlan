@@ -15,6 +15,7 @@ import ie.setu.pupplan.models.LocationModel
 import ie.setu.pupplan.databinding.ActivityLocationBinding
 import ie.setu.pupplan.helpers.showImagePicker
 import ie.setu.pupplan.main.MainApp
+import ie.setu.pupplan.models.Address
 import timber.log.Timber.i
 
 class LocationActivity : AppCompatActivity() {
@@ -24,12 +25,13 @@ class LocationActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLocationBinding
     //this gets passed to the showImagePicker function
     private lateinit var imageIntentLauncher : ActivityResultLauncher<Intent>
+    private lateinit var mapIntentLauncher : ActivityResultLauncher<Intent>
 //    bring in data model
     var location = LocationModel()
 //reference to the main app object (lateinit overrules null safety checks)
     lateinit var app : MainApp
+//    var address = Address(52.245696, -7.139102, 15f)
 
-//    main function
     override fun onCreate(savedInstanceState: Bundle?) {
 
     super.onCreate(savedInstanceState)
@@ -51,6 +53,8 @@ class LocationActivity : AppCompatActivity() {
             location = intent.extras?.getParcelable("location_edit")!!
             binding.locationTitle.setText(location.title)
             binding.locationDescription.setText(location.description)
+            binding.locationCategory.setText(location.locationCategory)
+
             binding.btnAdd.setText(R.string.save_location)
             Picasso.get()
                 .load(location.image)
@@ -63,6 +67,7 @@ class LocationActivity : AppCompatActivity() {
         binding.btnAdd.setOnClickListener(){
             location.title = binding.locationTitle.text.toString()
             location.description = binding.locationDescription.text.toString()
+            location.locationCategory = binding.locationCategory.text.toString()
             if (location.title.isEmpty()) {
                 Snackbar
                     .make(it, R.string.enter_location_title, Snackbar.LENGTH_LONG)
@@ -86,6 +91,20 @@ class LocationActivity : AppCompatActivity() {
             i("Select image") }
 
         registerImagePickerCallback()
+
+        binding.locationAddress.setOnClickListener {
+            val address = Address(52.245696, -7.139102, 15f)
+            if (location.zoom != 0f) {
+                address.lat =  location.lat
+                address.lng = location.lng
+                address.zoom = location.zoom
+            }
+            val launcherIntent = Intent(this, MapActivity::class.java)
+                .putExtra("address", address)
+            mapIntentLauncher.launch(launcherIntent)
+        }
+
+        registerMapCallback()
 
     }
 
@@ -118,6 +137,26 @@ class LocationActivity : AppCompatActivity() {
                                 .load(location.image)
                                 .into(binding.locationImage)
                             binding.chooseImage.setText(R.string.change_location_image)
+                        } // end of if
+                    }
+                    RESULT_CANCELED -> { } else -> { }
+                }
+            }
+    }
+
+    private fun registerMapCallback() {
+        mapIntentLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult())
+            { result ->
+                when (result.resultCode) {
+                    RESULT_OK -> {
+                        if (result.data != null) {
+                            i("Got Address ${result.data.toString()}")
+                            val address = result.data!!.extras?.getParcelable<Address>("address")!!
+                            i("Address == $address")
+                            location.lat = address.lat
+                            location.lng = address.lng
+                            location.zoom = address.zoom
                         } // end of if
                     }
                     RESULT_CANCELED -> { } else -> { }

@@ -8,11 +8,17 @@ import kotlinx.parcelize.Parcelize
 data class LocationModel(var id: Long = 0,
                          var title: String = "",
                          var description: String = "",
-//                        var locationCategory: String = "",
-//                        var lat: Double = 00.00,
-//                        var lng: Double = 00.00,
+                         var locationCategory: String = "",
+                         var lat: Double = 00.00,
+                         var lng: Double = 00.00,
+                         var zoom: Float = 0f,
 //                        var openingTime: Double = 00.00,
 //                        var closingTime: Double = 00.00,
 //                        var userId: String? = "",
                           var image: Uri = Uri.EMPTY
 ): Parcelable
+
+@Parcelize
+data class Address(var lat: Double = 0.0,
+                    var lng: Double = 0.0,
+                    var zoom: Float = 0f) : Parcelable
