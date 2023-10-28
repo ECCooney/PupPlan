@@ -9,18 +9,23 @@ import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
+import android.widget.SearchView
+import androidx.activity.result.ActivityResultLauncher
 import ie.setu.pupplan.R
 import ie.setu.pupplan.adapters.LocationAdapter
 import ie.setu.pupplan.adapters.LocationListener
 import ie.setu.pupplan.databinding.ActivityLocationListBinding
 import ie.setu.pupplan.main.MainApp
 import ie.setu.pupplan.models.LocationModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class LocationListActivity : AppCompatActivity(), LocationListener {
 //retrieving a reference to mainapp
     lateinit var app: MainApp
     private lateinit var binding: ActivityLocationListBinding
+    private lateinit var refreshIntentLauncher : ActivityResultLauncher<Intent>
 
 //override rules are available here for clarity https://www.geeksforgeeks.org/overriding-rules-in-kotlin/
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,6 +43,21 @@ class LocationListActivity : AppCompatActivity(), LocationListener {
         val layoutManager = GridLayoutManager(this, 2)
         binding.recyclerView.layoutManager = layoutManager
         binding.recyclerView.adapter = LocationAdapter(app.locations.findAll(), this)
+        updateRecyclerView()
+        registerRefreshCallback()
+
+        val searchView = findViewById<SearchView>(R.id.searchView)
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                // Filter the list based on search query
+                filterLocationList(newText)
+                return true
+            }
+    })
 
     }
 //    override the method to load the menu resource:
@@ -57,6 +77,12 @@ class LocationListActivity : AppCompatActivity(), LocationListener {
         return super.onOptionsItemSelected(item)
     }
 
+    private fun registerRefreshCallback() {
+        refreshIntentLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult())
+            { binding.recyclerView.adapter!!.notifyDataSetChanged() }
+    }
+
     private val getResult =
         registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
@@ -74,6 +100,13 @@ class LocationListActivity : AppCompatActivity(), LocationListener {
         getClickResult.launch(launcherIntent)
     }
 
+    private fun updateRecyclerView() {
+        GlobalScope.launch(Dispatchers.Main) {
+            val locations = app.locations.findAll()
+            binding.recyclerView.adapter = LocationAdapter(locations, this@LocationListActivity)
+        }
+    }
+
     private val getClickResult =
         registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
@@ -83,5 +116,13 @@ class LocationListActivity : AppCompatActivity(), LocationListener {
                 notifyItemRangeChanged(0,app.locations.findAll().size)
             }
         }
+
+    private fun filterLocationList(query: String?) {
+        GlobalScope.launch(Dispatchers.Main) {
+            val filteredList = app.locations.findAll()
+                .filter { it.locationCategory.contains(query ?: "", true) }
+            (binding.recyclerView.adapter as LocationAdapter).updateList(filteredList)
+        }
+    }
 
 }

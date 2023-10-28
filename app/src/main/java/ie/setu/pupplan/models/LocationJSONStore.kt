@@ -41,8 +41,24 @@ class LocationJSONStore(private val context: Context) : LocationStore {
     }
 
 
-    override fun update(location:  LocationModel) {
-        // todo
+    override fun update(location: LocationModel) {
+        var foundLocation: LocationModel? = locations.find { l -> l.id == location.id}
+        if (foundLocation != null) {
+            foundLocation.title = location.title
+            foundLocation.description = location.description
+            foundLocation.image= location.image
+            foundLocation.locationCategory = location.locationCategory
+            foundLocation.openingTime = location.openingTime
+            foundLocation.closingTime = location.closingTime
+            foundLocation.lat = location.lat
+            foundLocation.lng = location.lng
+            foundLocation.zoom = location.zoom
+        }
+        serialize()
+    }
+    override fun delete(location: LocationModel) {
+        locations.remove(location)
+        serialize()
     }
 
     private fun serialize() {

@@ -36,13 +36,18 @@ class LocationAdapter constructor(private var locations: List<LocationModel>,
 
     override fun getItemCount(): Int = locations.size
 
+    fun updateList(filteredLocations: List<LocationModel>) {
+        locations = filteredLocations
+        notifyDataSetChanged()
+    }
+
     class MainHolder(private val binding : CardLocationBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(location: LocationModel, listener: LocationListener) {
             binding.locationTitle.text = location.title
 //            binding.locationDescription.text = location.description
-//            binding.locationCategory.text = location.locationCategory
+            binding.locationCategory.text = location.locationCategory
 
             Picasso.get().load(location.image).resize(200,200).into(binding.imageIcon)
             binding.root.setOnClickListener { listener.onLocationClick(location) }
