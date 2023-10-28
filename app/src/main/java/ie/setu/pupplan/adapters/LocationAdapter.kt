@@ -41,8 +41,9 @@ class LocationAdapter constructor(private var locations: List<LocationModel>,
 
         fun bind(location: LocationModel, listener: LocationListener) {
             binding.locationTitle.text = location.title
-            binding.locationDescription.text = location.description
-            binding.locationCategory.text = location.locationCategory
+//            binding.locationDescription.text = location.description
+//            binding.locationCategory.text = location.locationCategory
+
             Picasso.get().load(location.image).resize(200,200).into(binding.imageIcon)
             binding.root.setOnClickListener { listener.onLocationClick(location) }
         }

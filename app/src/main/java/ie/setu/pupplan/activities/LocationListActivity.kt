@@ -8,6 +8,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import ie.setu.pupplan.R
 import ie.setu.pupplan.adapters.LocationAdapter
@@ -34,7 +35,7 @@ class LocationListActivity : AppCompatActivity(), LocationListener {
         app = application as MainApp
 
 
-        val layoutManager = LinearLayoutManager(this)
+        val layoutManager = GridLayoutManager(this, 2)
         binding.recyclerView.layoutManager = layoutManager
         binding.recyclerView.adapter = LocationAdapter(app.locations.findAll(), this)
 

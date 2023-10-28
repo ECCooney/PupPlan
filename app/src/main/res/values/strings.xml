@@ -11,6 +11,8 @@
         <item>Hotel</item>
         <item>Outdoor area</item>
     </string-array>
+    <string name="hint_locationOpening">Opening Time</string>
+    <string name="hint_locationClosing">Closing Time</string>
     <string name="menu_addLocation">Add</string>
     <string name="menu_cancelLocation">Cancel</string>
     <string name="enter_location_title"> Please enter Your Location\'s Name </string>

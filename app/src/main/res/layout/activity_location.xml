@@ -76,31 +76,67 @@
                     android:textSize="14sp"
                     />
 
-<!--                <EditText-->
-<!--                    android:id="@+id/locationDescription"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="48dp"-->
-<!--                    android:layout_margin="8dp"-->
-<!--                    android:hint="@string/hint_locationDescription"-->
-<!--                    android:inputType="text"-->
-<!--                    android:maxLength="25"-->
-<!--                    android:maxLines="1"-->
-<!--                    android:padding="8dp"-->
-<!--                    android:textColor="@color/colorPrimaryDark"-->
-<!--                    android:textSize="14sp" />-->
 
-                <EditText
-                    android:id="@+id/locationCategory"
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_margin="8dp"
+                    android:layout_height="wrap_content"
                     android:hint="Category"
-                    android:inputType="text"
-                    android:maxLength="25"
-                    android:maxLines="1"
-                    android:padding="8dp"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="14sp" />
+                    android:layout_margin="8dp"
+                    android:layout_weight=".33">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/locationCategory"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        app:simpleItems="@array/categorys" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="8dp">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="2dp"
+                        android:layout_weight=".33"
+                        android:hint="Opening Time">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/openingTime"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="none" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/yearPickerTextField"
+                        style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="2dp"
+                        android:layout_weight=".33"
+                        android:hint="Closing Time">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/closingTime"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="none" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+
                 <Button
                     android:id="@+id/locationAddress"
                     android:layout_width="match_parent"
