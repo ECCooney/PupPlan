@@ -34,10 +34,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="I'm a title"
+                android:text="@string/hint_locationTitle"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/imageIcon" />
+                app:layout_constraintTop_toBottomOf="@id/imageIcon"
+                android:justificationMode="inter_word"/>
 
             <TextView
                 android:id="@+id/locationCategory"
@@ -45,7 +46,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="Category"
+                android:text="@string/hint_locationCategory"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/locationTitle" />
