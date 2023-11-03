@@ -17,6 +17,8 @@
     <string name="menu_cancelLocation">Cancel</string>
     <string name="enter_location_title"> Please enter Your Location\'s Name </string>
     <string name="save_location"> Save Location </string>
+    <string name="button_Deletelocation"> Delete Location </string>
+    <string name="all_locations"> All Locations </string>
 
     <!--    photos-->
     <string name="button_addImage"> Add New Image </string>
@@ -27,6 +29,8 @@
 
     <string name="button_address">Set Address</string>
     <string name="title_activity_map">MapActivity</string>
+
+    <string name="menu_viewAll"> View All </string>
 
 
 </resources>

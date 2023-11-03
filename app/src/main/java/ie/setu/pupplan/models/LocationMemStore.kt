@@ -36,6 +36,10 @@ class LocationMemStore : LocationStore {
         }
     }
 
+    override fun delete(location: LocationModel) {
+        //todo
+    }
+
     private fun logAll() {
         locations.forEach{ i("${it}") }
     }

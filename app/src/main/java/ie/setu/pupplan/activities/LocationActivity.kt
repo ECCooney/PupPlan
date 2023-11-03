@@ -54,6 +54,7 @@ class LocationActivity : AppCompatActivity() {
             binding.locationTitle.setText(location.title)
             binding.locationDescription.setText(location.description)
             binding.locationCategory.setText(location.locationCategory)
+            binding.btnDelete.setText(R.string.button_Deletelocation)
 
             binding.btnAdd.setText(R.string.save_location)
             Picasso.get()
@@ -85,6 +86,13 @@ class LocationActivity : AppCompatActivity() {
             setResult(RESULT_OK)
             finish()
         }
+
+        binding.btnDelete.setOnClickListener(){
+            app.locations.delete(location)
+            setResult(RESULT_OK)
+            finish()
+        }
+
         binding.chooseImage.setOnClickListener(){
     //showImagePicker coming from helpers
             showImagePicker(imageIntentLauncher, this)
@@ -103,6 +111,7 @@ class LocationActivity : AppCompatActivity() {
                 .putExtra("address", address)
             mapIntentLauncher.launch(launcherIntent)
         }
+
 
         registerMapCallback()
 
