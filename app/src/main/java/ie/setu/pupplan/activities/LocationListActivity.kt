@@ -9,8 +9,8 @@ import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.recyclerview.widget.GridLayoutManager
-import android.widget.SearchView
 import androidx.activity.result.ActivityResultLauncher
+import androidx.appcompat.widget.SearchView
 import ie.setu.pupplan.R
 import ie.setu.pupplan.adapters.LocationAdapter
 import ie.setu.pupplan.adapters.LocationListener
