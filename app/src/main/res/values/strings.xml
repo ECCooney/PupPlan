@@ -19,6 +19,7 @@
     <string name="save_location"> Save Location </string>
     <string name="button_Deletelocation"> Delete Location </string>
     <string name="all_locations"> All Locations </string>
+    <string name="hint_search"> Search by Category </string>
 
     <!--    photos-->
     <string name="button_addImage"> Add New Image </string>
