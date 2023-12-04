@@ -10,7 +10,7 @@ import ie.setu.pupplan.models.LocationModel
 //interface will represent click events on a location Card,
 // and allow us to abstract the response to this event
 interface LocationListener {
-    fun onLocationClick(location: LocationModel)
+    fun onLocationClick(location: LocationModel, position: Int)
 }
 
 // below class is designed to work with a RecyclerView to display a
@@ -41,7 +41,7 @@ class LocationAdapter constructor(private var locations: List<LocationModel>,
         notifyDataSetChanged()
     }
 
-    class MainHolder(private val binding : CardLocationBinding) :
+    inner class MainHolder(private val binding : CardLocationBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(location: LocationModel, listener: LocationListener) {
@@ -50,7 +50,7 @@ class LocationAdapter constructor(private var locations: List<LocationModel>,
             binding.locationCategory.text = location.locationCategory
 
             Picasso.get().load(location.image).resize(200,200).into(binding.imageIcon)
-            binding.root.setOnClickListener { listener.onLocationClick(location) }
+            binding.root.setOnClickListener { listener.onLocationClick(location, adapterPosition) }
         }
     }
 

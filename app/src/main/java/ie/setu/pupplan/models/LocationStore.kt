@@ -5,4 +5,5 @@ interface LocationStore {
     fun create(location: LocationModel)
     fun update (location: LocationModel)
     fun delete (location: LocationModel)
+    fun findById(id:Long) : LocationModel?
 }

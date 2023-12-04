@@ -26,6 +26,8 @@ class LocationListActivity : AppCompatActivity(), LocationListener {
     lateinit var app: MainApp
     private lateinit var binding: ActivityLocationListBinding
     private lateinit var refreshIntentLauncher : ActivityResultLauncher<Intent>
+//adapter position
+    private var position: Int = 0
 
 //override rules are available here for clarity https://www.geeksforgeeks.org/overriding-rules-in-kotlin/
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,9 +75,18 @@ class LocationListActivity : AppCompatActivity(), LocationListener {
                 val launcherIntent = Intent(this, LocationActivity::class.java)
                 getResult.launch(launcherIntent)
             }
+            R.id.item_map -> {
+                val launcherIntent = Intent(this, LocationMapsActivity::class.java)
+                mapIntentLauncher.launch(launcherIntent)
+            }
         }
         return super.onOptionsItemSelected(item)
     }
+
+    private val mapIntentLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        )    { }
 
     private fun registerRefreshCallback() {
         refreshIntentLauncher =
@@ -93,10 +104,11 @@ class LocationListActivity : AppCompatActivity(), LocationListener {
             }
         }
 
-    override fun onLocationClick(location: LocationModel) {
+    override fun onLocationClick(location: LocationModel, pos: Int) {
         val launcherIntent = Intent(this, LocationActivity::class.java)
         //pass the selected location to the activity (this is enabled by parcelable)
         launcherIntent.putExtra("location_edit", location)
+        position = pos
         getClickResult.launch(launcherIntent)
     }
 
@@ -115,6 +127,9 @@ class LocationListActivity : AppCompatActivity(), LocationListener {
                 (binding.recyclerView.adapter)?.
                 notifyItemRangeChanged(0,app.locations.findAll().size)
             }
+            else
+                if (it.resultCode == 99)
+                    (binding.recyclerView.adapter)?.notifyItemRemoved(position)
         }
 
     private fun filterLocationList(query: String?) {
@@ -124,5 +139,6 @@ class LocationListActivity : AppCompatActivity(), LocationListener {
             (binding.recyclerView.adapter as LocationAdapter).updateList(filteredList)
         }
     }
+
 
 }

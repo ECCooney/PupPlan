@@ -176,6 +176,7 @@
                     android:textSize="16sp" />
 
                 <Button
+                    android:visible="false"
                     android:id="@+id/btnDelete"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
