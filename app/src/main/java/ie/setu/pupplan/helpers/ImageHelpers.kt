@@ -11,8 +11,8 @@ fun showImagePicker(intentLauncher: ActivityResultLauncher<Intent>, context: Con
     imagePickerTargetIntent.action = Intent.ACTION_OPEN_DOCUMENT
     imagePickerTargetIntent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
     imagePickerTargetIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-    imagePickerTargetIntent.type = "image/*"
+    imagePickerTargetIntent.category = "image/*"
     imagePickerTargetIntent = Intent.createChooser(imagePickerTargetIntent,
-        context.getString(R.string.select_location_image))
+        context.getString(R.string.select_petLocation_image))
     intentLauncher.launch(imagePickerTargetIntent)
 }

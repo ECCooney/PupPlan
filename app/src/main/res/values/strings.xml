@@ -1,37 +1,147 @@
 <resources>
     <string name="app_name">PupPlan</string>
-    <!--    adding a location-->
-    <string name="button_addLocation">Add Your Stop</string>
-    <string name="hint_locationTitle">Location</string>
-    <string name="hint_locationDescription">Description</string>
-    <string name="hint_locationCategory">Category</string>
-    <string-array name="categorys">
-        <item>Bar</item>
-        <item>Restaurant</item>
-        <item>Hotel</item>
-        <item>Outdoor area</item>
-    </string-array>
-    <string name="hint_locationOpening">Opening Time</string>
-    <string name="hint_locationClosing">Closing Time</string>
-    <string name="menu_addLocation">Add</string>
-    <string name="menu_cancelLocation">Cancel</string>
-    <string name="enter_location_title"> Please enter Your Location\'s Name </string>
-    <string name="save_location"> Save Location </string>
-    <string name="button_Deletelocation"> Delete Location </string>
-    <string name="all_locations"> All Locations </string>
-    <string name="hint_search"> Search by Category </string>
+    <string name="donateTitle">Welcome Homer</string>
+    <string name="donateSubtitle">Please Give Generously</string>
+    <string name="donateButton">Donate</string>
+    <string name="paypal">PayPal</string>
+    <string name="direct">Direct</string>
+    <string name="amount">Amount</string>
+    <string name="total">Total so Far</string>
+    <string name="totalSoFar">$ %1$d</string>
+    <string name="reportTitle">Donations Report</string>
+    <string name="defaultAmount">00</string>
+    <string name="defaultMethod">N/A</string>
+    <string name="enter_amount">Enter Amount</string>
+    <string name="action_donate">Donate</string>
+    <string name="action_report">Report</string>
 
-    <!--    photos-->
-    <string name="button_addImage"> Add New Image </string>
-    <string name="select_location_image">Select location image</string>
-    <string name="change_location_image">Change location image</string>
+    <string name="action_share">Share</string>
+    <string name="action_send">Send</string>
+    <string name="group_communicate">Communicate</string>
 
-    <!--    address-->
 
-    <string name="button_address">Set Address</string>
+    <string name="nav_header_desc">Navigation header</string>
+
+    <string name="action_about">About Us</string>
+    <string name="aboutus_title">Homer for President !!</string>
+    <string name="aboutus_message">Hi, I\'m Homer\n\nPlease vote for me.\n\n Please Please Please Please!!</string>
+
+    <string name="donationsNotFound">No Donations Yet…\nGo Make a Donation!</string>
+    <string name="donationError">Error : Couldn\'t Make a Donation…</string>
+    <string name="donationDetails">Donation Details</string>
+
+    <string name="amt">Amount :</string>
+    <string name="payment">Payment :</string>
+    <string name="message">Message :</string>
+    <string name="upvotes">UpVotes :</string>
+
+    <string name="messageLoading">Please Wait while the Donations are Loading...</string>
+
+    <!-- START Firebase Resources-->
+
+    <string name="label_emailpassword">Email/Password Authentication</string>
+    <string name="desc_emailpassword">Use an email and password to authenticate with Firebase.</string>
+    <string name="sign_in">Sign In</string>
+    <string name="create_account">Create Account</string>
+    <string name="send_link">Send Link</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="verify_email">Verify Email</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="loading">Loading…</string>
+    <string name="signed_in">Signed In</string>
+    <string name="signed_out">Signed Out</string>
+    <string name="token_null">Token: null</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="desc_firebase_lockup">Firebase logo and name</string>
+    <string name="auth_failed">Authentication failed</string>
+    <string name="firebase_status_fmt">Firebase User: %s</string>
+    <string name="firebase_user_management">Firebase User Management</string>
+    <string name="emailpassword_status_fmt">Email User: %1$s (verified: %2$b)</string>
+    <string name="emailpassword_title_text">Please Login Below</string>
+
+    <string name="update">Update</string>
+    <string name="delete">Delete</string>
+    <string name="set_location">Set Location</string>
+
+
+
+    <string name="button_addPetLocation">Add PetLocation</string>
+    <string name="hint_petLocationTitle">Location Title</string>
+    <string name="hint_petLocationDescription">Description </string>
+    <string name="menu_addPetLocation">Add Location</string>
+    <string name="menu_cancelPetLocation">Back</string>
+    <string name="enter_petLocation_title"> Please enter a Location Title </string>
+    <string name="save_petLocation"> Save Location </string>
+    <string name="button_addImage"> Add Image </string>
+    <string name="select_petLocation_image">Select Location image</string>
+    <string name="button_changeImage">Change Image</string>
+    <string name="hint_eventTitle">Event Title</string>
+    <string name="hint_eventDescription">Event Description </string>
+    <string name="button_addEvent">Add Event</string>
+    <string name="menu_addEvent">Add Event</string>
+    <string name="menu_cancelEvent">Cancel Event</string>
+    <string name="enter_event_title"> Please enter a Event Title </string>
+    <string name="save_event"> Save Event</string>
+    <string name="select_event_image">Select event image</string>
+    <string name="button_location">Set Address</string>
     <string name="title_activity_map">MapActivity</string>
-
-    <string name="menu_viewAll"> View All </string>
-
+    <string name="hint_eventLatitude">Event Latitude</string>
+    <string name="hint_eventLongitude">Event Longitude</string>
+    <string name="splash_image">Splash Image</string>
+    <string name="new_event">Add New Event</string>
+    <string name="menu_petLocation_delete">Location Delete</string>
+    <string name="edit_petLocation_details">Edit Location Details</string>
+    <string name="enter_petLocation_details">Enter Location Details</string>
+    <string name="petLocation_title_label">Location Title</string>
+    <string name="petLocation_description_label">Location Description</string>
+    <string name="new_petLocation_label">New Location</string>
+    <string name="petLocations_label">Locations</string>
+    <string name="menu_event_delete">Event Delete</string>
+    <string name="title_activity_event_maps">EventMapsActivity</string>
+    <string name="event_image_placeholder">Event Image</string>
+    <string name="event_title_placeholder">Event Title</string>
+    <string name="event_description_placeholder">Event Description</string>
+    <string name="menu_viewEvents">View Events</string>
+    <string name="petLocation_eventList">Events for Location:</string>
+    <string name="title_activity_event_list">EventListActivity</string>
+    <string name="button_goToEvents">Go To Events</string>
+    <string name="title_petLocationName">Location</string>
+    <string name="selected_item">Selected item:</string>
+    <string-array name="menu_petLocationCategorys">
+        <item>Outdoor Area</item>
+        <item>Dog Groomers</item>
+        <item>Hotel</item>
+        <item>Bar/Restaurant</item>
+        <item>Pet Shop</item>
+    </string-array>
+    <string name="petLocation_category_label">Location Type</string>
+    <string name="btn_filter">Filter Location Types</string>
+    <string name="event_budget_label">Event Cost</string>
+    <string name="event_title_label">Event Title</string>
+    <string name="event_description_label">Event Description</string>
+    <string name="event_location_label">Event Location</string>
+    <string name="event_images_label">Event Images</string>
+    <string name="event_start_label">Event Start Date</string>
+    <string name="btn_budget_filter">Filter Event Cost</string>
+    <string name="petLocation_filter_label">Filter Location Types</string>
+    <string name="new_event_label">New Event</string>
+    <string name="petLocation_image_label">Location Image</string>
+    <string name="event_save">Event Save</string>
+    <string name="petLocation_save">Location Save</string>
+    <string name="event_petLocation_placeholder">Location Title</string>
+    <string name="petLocationsNotFound">No Locations Entered Yet…\nEnter a New Location!</string>
+    <string name="petLocationMessageLoading">Please wait while the Locations are loading...</string>
+    <string name="nav_header_title">PupPlan</string>
+    <string name="nav_header_subtitle">Promote Your Events!</string>
+    <string name="action_petLocation_list">Location List</string>
+    <string name="eventsNotFound">No Events Entered For This Location Yet…\nEnter a New Event!</string>
+    <string name="action_event_list">Event List</string>
+    <string name="action_new_petLocation">New Location</string>
+    <string name="action_new_event">New Event</string>
+    <string name="menu_home">Home</string>
+    <string name="group_map">Map of Events</string>
+    <string name="action_map">Events</string>
+    <string name="action_petLocation">New Location</string>
 
 </resources>

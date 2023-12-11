@@ -2,11 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
-        android:name=".main.MainApp"
+        android:name="ie.setu.pupplan.main.MainApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -14,20 +15,11 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.App.Starting"
+        android:theme="@style/Theme.Pupplan"
         tools:targetApi="31">
 
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="${MAPS_API_KEY}" />
-
         <activity
-            android:name=".activities.MapActivity"
-            android:theme="@style/Theme.PupPlan"
-            android:exported="false"
-            android:label="@string/title_activity_map" />
-        <activity
-            android:name=".activities.LocationListActivity"
+            android:name="ie.setu.pupplan.ui.auth.Login"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -40,13 +32,24 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".activities.LocationActivity"
-            android:exported="true"
-            android:theme="@style/Theme.PupPlan">
+            android:name="ie.setu.pupplan.ui.home.Home">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${MAPS_API_KEY}" />
+        <activity
+            android:name=".ui.map.MapEvent"
+            android:exported="true"
+            android:label="@string/title_activity_map" />
+
     </application>
 
 </manifest>

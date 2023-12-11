@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/item_home"
+        android:icon="@drawable/icon_home_white"
+        android:title="@string/menu_home"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/item_cancel"
+        android:icon="@android:drawable/ic_menu_revert"
+        android:iconTint="@color/colorPrimary"
+        android:iconTintMode="multiply"
+        android:title="@string/menu_cancelPetLocation"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/item_event_save"
+        android:icon="@android:drawable/ic_menu_save"
+        android:title="@string/event_save"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/eventListFragment"
+        android:orderInCategory="100"
+        android:title="@string/action_event_list"
+        app:showAsAction="never" />
+</menu>

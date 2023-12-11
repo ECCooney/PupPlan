@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/petLocationNewFragment"
+            android:icon="@android:drawable/ic_menu_add"
+            android:title="@string/action_petLocation" />
+        <item
+            android:id="@+id/petLocationListFragment"
+            android:icon="@drawable/ic_menu_report"
+            android:title="@string/action_petLocation_list" />
+        <item
+            android:id="@+id/aboutFragment"
+            android:icon="@drawable/ic_menu_aboutus"
+            android:title="@string/action_about" />
+    </group>
+    <item android:title="@string/group_map">
+        <menu>
+            <item
+                android:id="@+id/eventsMapFragment"
+                android:icon="@android:drawable/ic_menu_mapmode"
+                android:title="@string/action_map" />
+            <item
+                android:id="@+id/nav_send"
+                android:icon="@drawable/ic_menu_send"
+                android:title="@string/action_send" />
+        </menu>
+    </item>
+    <item android:title="Access Control">
+        <menu>
+            <item
+                android:id="@+id/nav_sign_out"
+                android:icon="@android:drawable/ic_menu_revert"
+                android:onClick="signOut"
+                android:title="@string/sign_out" />
+        </menu>
+    </item>
+</menu>
+

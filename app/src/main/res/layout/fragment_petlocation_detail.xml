@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="petLocationvm"
+            type="ie.setu.pupplan.ui.petLocationDetail.PetLocationDetailViewModel" />
+    </data>
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frameLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.petLocationDetail.PetLocationDetailFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:id="@+id/petLocationName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/cinzel"
+                android:gravity="center_horizontal|center_vertical"
+                android:inputType="none"
+                android:paddingTop="6pt"
+                android:text="@string/new_petLocation_label"
+                android:textColor="@color/colorTitles"
+                android:textSize="34sp" />
+
+            <Button
+                android:id="@+id/btnGoToEvents"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:background="@color/colorAccentVariant"
+                android:gravity="center|center_horizontal"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:stateListAnimator="@null"
+                android:text="@string/button_goToEvents"
+                android:textColor="@color/colorPrimary"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/editPetLocationDetails"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:fontFamily="@font/roboto"
+                android:text="@string/edit_petLocation_details"
+                android:textColor="@color/colorSubTitles"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/petLocationTitleLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:fontFamily="@font/roboto"
+                android:text="@string/petLocation_title_label"
+                android:textColor="#2AA599"
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/petLocationTitle"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_margin="8dp"
+                android:autofillHints=""
+                android:fontFamily="@font/roboto"
+                android:text="@={petLocationvm.observablePetLocation.title}"
+                android:maxLength="20"
+                android:maxLines="1"
+                android:padding="8dp"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/petLocationDescriptionLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:fontFamily="@font/roboto"
+                android:text="@string/petLocation_description_label"
+                android:textColor="#2AA599"
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:fontFamily="@font/roboto"
+                android:text="@={petLocationvm.observablePetLocation.description}"
+                android:inputType="text"
+                android:maxLength="50"
+                android:maxLines="1"
+                android:padding="8dp"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/petLocationCategoryLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:fontFamily="@font/roboto"
+                android:text="@string/petLocation_category_label"
+                android:textColor="#2AA599"
+                android:textSize="16sp" />
+
+            <Spinner
+                android:id="@+id/petLocationCategorySpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/petLocationImageLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:fontFamily="@font/roboto"
+                android:text="@string/petLocation_image_label"
+                android:textColor="#2AA599"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/petLocationImage"
+                android:layout_width="350dp"
+                android:layout_height="wrap_content"
+                app:srcCompat="@mipmap/ic_launcher"/>
+
+            <Button
+                android:id="@+id/chooseImage"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:background="@color/colorAccent"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:text="@string/button_addImage"
+                android:textColor="@color/colorPrimary"
+                android:textSize="16sp" />
+
+
+
+
+
+
+        </LinearLayout>
+
+
+
+    </ScrollView>
+
+    <Button
+        android:id="@+id/editPetLocationButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/update"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/deletePetLocationButton"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/deletePetLocationButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/delete"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/editPetLocationButton" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
+

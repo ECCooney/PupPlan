@@ -1,9 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="color_primary">#0E76CC</color>
+    <color name="color_secondary">#2196F3</color>
+
+    <color name="ic_launcher_homer_background">#FFFFFF</color>
+
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="grey_100">#2196F3</color>
+    <color name="grey_300">#E0E0E0</color>
+    <color name="grey_500">#9E9E9E</color>
+
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="colorPrimary">#F2E749</color>
-    <color name="colorPrimaryDark">#F28D35</color>
-    <color name="colorAccent">#2CBFBF</color>
-    <color name="colorRed">#880808</color>
+    <color name="grey">#6A6767</color>
+    <color name="colorPrimary">#FFFFFF</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorTitles">#FF018786</color>
+    <color name="colorSubTitles">#2AA599</color>
+    <color name="colorAccent">#4c90af</color>
+    <color name="colorAccentVariant">#2AADB1</color>
+    <color name="colorButtons">#167477</color>
 </resources>
