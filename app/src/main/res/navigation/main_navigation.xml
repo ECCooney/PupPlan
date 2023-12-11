@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_navigation"
+    app:startDestination="@id/petLocationListFragment">
+
+    <fragment
+        android:id="@+id/petLocationNewFragment"
+        android:name="ie.setu.pupplan.ui.petLocationNew.PetLocationNewFragment"
+        android:label="New PetLocation"
+        tools:layout="@layout/fragment_petLocation_new">
+        <action
+            android:id="@+id/action_petLocationNewFragment_to_petLocationListFragment"
+            app:destination="@id/petLocationListFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim" />
+    </fragment>
+    <fragment
+        android:id="@+id/petLocationListFragment"
+        android:name="ie.setu.pupplan.ui.petLocationList.PetLocationListFragment"
+        android:label="PetLocation List"
+        tools:layout="@layout/fragment_petLocation_list">
+        <action
+            android:id="@+id/action_petLocationListFragment_to_petLocationNewFragment"
+            app:destination="@id/petLocationNewFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popUpTo="@id/main_navigation"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_petLocationListFragment_to_petLocationDetailFragment"
+            app:destination="@id/petLocationDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="ie.setu.pupplan.ui.about.AboutFragment"
+        android:label="@string/action_about"
+        tools:layout="@layout/fragment_about" />
+    <fragment
+        android:id="@+id/petLocationDetailFragment"
+        android:name="ie.setu.pupplan.ui.petLocationDetail.PetLocationDetailFragment"
+        android:label="PetLocation Detail"
+        tools:layout="@layout/fragment_petLocation_detail">
+        <action
+            android:id="@+id/action_petLocationDetailFragment_to_petLocationListFragment"
+            app:destination="@id/petLocationListFragment" />
+        <argument
+            android:name="petLocationid"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_petLocationDetailFragment_to_eventListFragment"
+            app:destination="@id/eventListFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim" />
+    </fragment>
+    <fragment
+        android:id="@+id/eventListFragment"
+        android:name="ie.setu.pupplan.ui.eventList.EventListFragment"
+        android:label="Event List"
+        tools:layout="@layout/fragment_event_list">
+        <argument
+            android:name="petLocationid"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_eventListFragment_to_petLocationDetailFragment"
+            app:destination="@id/petLocationDetailFragment" />
+        <action
+            android:id="@+id/action_eventListFragment_to_eventNewFragment"
+            app:destination="@id/eventNewFragment" />
+        <action
+            android:id="@+id/action_eventListFragment_to_eventDetailFragment"
+            app:destination="@id/eventDetailFragment" />
+        <action
+            android:id="@+id/action_eventListFragment_to_petLocationListFragment"
+            app:destination="@id/petLocationListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/eventNewFragment"
+        android:name="ie.setu.pupplan.ui.eventNew.EventNewFragment"
+        android:label="New Event"
+        tools:layout="@layout/fragment_event_new">
+        <action
+            android:id="@+id/action_eventNewFragment_to_eventListFragment"
+            app:destination="@id/eventListFragment" />
+        <argument
+            android:name="petLocationid"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_eventNewFragment_to_petLocationListFragment"
+            app:destination="@id/petLocationListFragment" />
+        <action
+            android:id="@+id/action_eventNewFragment_to_eventMapFragment"
+            app:destination="@id/eventMapFragment" />
+        <argument
+            android:name="location"
+            app:argType="ie.setu.pupplan.models.Location" />
+        <argument
+            android:name="event"
+            app:argType="ie.setu.pupplan.models.NewEvent" />
+    </fragment>
+    <fragment
+        android:id="@+id/eventDetailFragment"
+        android:name="ie.setu.pupplan.ui.eventDetail.EventDetailFragment"
+        android:label="Event Detail">
+        <action
+            android:id="@+id/action_eventDetailFragment_to_eventListFragment"
+            app:destination="@id/eventListFragment" />
+        <argument
+            android:name="event"
+            app:argType="ie.setu.pupplan.models.NewEvent" />
+        <argument
+            android:name="petLocationid"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_eventDetailFragment_to_petLocationListFragment"
+            app:destination="@id/petLocationListFragment" />
+        <action
+            android:id="@+id/action_eventDetailFragment_to_eventMapFragment"
+            app:destination="@id/eventMapFragment" />
+        <argument
+            android:name="location"
+            app:argType="ie.setu.pupplan.models.Location" />
+    </fragment>
+    <fragment
+        android:id="@+id/eventMapFragment"
+        android:name="ie.setu.pupplan.ui.eventMap.EventMapFragment"
+        android:label="fragment_event_map"
+        tools:layout="@layout/fragment_event_map" >
+        <argument
+            android:name="location"
+            app:argType="ie.setu.pupplan.models.Location" />
+        <action
+            android:id="@+id/action_eventMapFragment_to_eventDetailFragment"
+            app:destination="@id/eventDetailFragment" />
+        <action
+            android:id="@+id/action_eventMapFragment_to_eventNewFragment"
+            app:destination="@id/eventNewFragment" />
+        <argument
+            android:name="petLocationid"
+            app:argType="string" />
+        <argument
+            android:name="event"
+            app:argType="ie.setu.pupplan.models.NewEvent" />
+    </fragment>
+    <fragment
+        android:id="@+id/eventsMapFragment"
+        android:name="ie.setu.pupplan.ui.eventsMap.EventsMapFragment"
+        android:label="fragment_events_map"
+        tools:layout="@layout/fragment_events_map" />
+</navigation>
