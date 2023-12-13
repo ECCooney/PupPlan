@@ -1,7 +1,7 @@
 package ie.setu.pupplan.helpers
 
 import android.content.Context
-import timber.log.Timber.e
+import timber.log.Timber
 import java.io.*
 
 fun write(context: Context, fileName: String, data: String) {
@@ -10,7 +10,7 @@ fun write(context: Context, fileName: String, data: String) {
         outputStreamWriter.write(data)
         outputStreamWriter.close()
     } catch (e: Exception) {
-        e("Cannot read file: %s", e.toString());
+        Timber.i("Cannot read file: %s", e.toString());
     }
 }
 
@@ -32,9 +32,9 @@ fun read(context: Context, fileName: String): String {
             str = partialStr.toString()
         }
     } catch (e: FileNotFoundException) {
-        e("file not found: %s", e.toString());
+        Timber.i("file not found: %s", e.toString());
     } catch (e: IOException) {
-        e("cannot read file: %s", e.toString());
+        Timber.i("cannot read file: %s", e.toString());
     }
     return str
 }

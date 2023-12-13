@@ -28,7 +28,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ie.setu.pupplan.adapters.PetLocationAdapter
 import ie.setu.pupplan.adapters.PetLocationClickListener
 import ie.setu.pupplan.databinding.FragmentPetlocationListBinding
-import ie.setu.pupplan.main.MainApp
+import ie.setu.pupplan.main.PupPlanApp
 import ie.setu.pupplan.models.PetLocationModel
 import ie.setu.pupplan.ui.auth.LoggedInViewModel
 import ie.setu.pupplan.utils.SwipeToDeleteCallback
@@ -40,7 +40,7 @@ import java.util.*
 
 class PetLocationListFragment : Fragment(), PetLocationClickListener {
 
-    lateinit var app: MainApp
+    lateinit var app: PupPlanApp
     private var _fragBinding: FragmentPetlocationListBinding? = null
     private val fragBinding get() = _fragBinding!!
     val petLocationCategorys = arrayOf("Show All", "Hotel", "Pet Shop", "Outdoor Area", "Bar")
@@ -104,7 +104,7 @@ class PetLocationListFragment : Fragment(), PetLocationClickListener {
         itemTouchEditHelper.attachToRecyclerView(fragBinding.recyclerView)
 
         val spinner = fragBinding.petLocationCategorySpinner
-        val adapter = activity?.applicationContext?.let { ArrayAdapter(it, R.layout.simple_spinner_item, petLocationCategorys) } as SpinnerAdapter
+        val adapter = activity?.applicationContext?.let { ArrayAdapter(it, android.R.layout.simple_spinner_item, petLocationCategorys) } as SpinnerAdapter
         spinner.adapter = adapter
         //val spinnerPosition = petLocationCategorys.indexOf(petLocationCategory)
         //spinner.setSelection(spinnerPosition)

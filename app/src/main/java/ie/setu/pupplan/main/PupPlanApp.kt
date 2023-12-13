@@ -3,7 +3,7 @@ package ie.setu.pupplan.main
 import android.app.Application
 import timber.log.Timber
 
-class MainApp : Application() {
+class PupPlanApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
