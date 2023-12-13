@@ -10,13 +10,22 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
 import com.google.firebase.auth.FirebaseUser
 import ie.setu.pupplan.R
+import ie.setu.pupplan.databinding.HomeBinding
+import ie.setu.pupplan.databinding.NavHeaderBinding
+import ie.setu.pupplan.firebase.FirebaseImageManager
+import ie.setu.pupplan.ui.auth.LoggedInViewModel
+import ie.setu.pupplan.ui.auth.Login
+import ie.setu.pupplan.utils.readImageUri
+import ie.setu.pupplan.utils.showImagePicker
 import timber.log.Timber
 
 class Home : AppCompatActivity() {

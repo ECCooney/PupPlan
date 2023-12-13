@@ -15,6 +15,8 @@ import com.google.android.material.snackbar.Snackbar
 import ie.setu.pupplan.R
 import ie.setu.pupplan.ui.home.Home
 import timber.log.Timber
+import androidx.lifecycle.Observer
+import ie.setu.pupplan.databinding.LoginBinding
 
 class Login : AppCompatActivity() {
 

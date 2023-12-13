@@ -63,7 +63,7 @@
     </style>
 
     <style name="MenuTextAppearance">
-        <item name="fontFamily">@font/cinzel_decorative</item>
+        <item name="fontFamily">@font/oswald</item>
         <item name="colorOnPrimary">@color/white</item>
         <item name="android:textSize">24sp</item>
         <item name="android:textStyle">bold</item>
