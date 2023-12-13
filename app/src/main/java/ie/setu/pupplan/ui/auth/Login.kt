@@ -64,7 +64,6 @@ class Login : AppCompatActivity() {
 
         startForResult.launch(signInIntent)
     }
-
     private fun setupGoogleSignInCallback() {
         startForResult =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
