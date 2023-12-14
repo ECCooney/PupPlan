@@ -230,7 +230,7 @@ object FirebaseDBManager : PetLocationStore {
         //petLocation.id = generateRandomId() // Generation of random id for petLocation
 
         val uid = firebaseUser.value!!.uid
-        val key = database.child("donations").push().key
+        val key = database.child("petLocations").push().key
         if (key == null) {
             Timber.i("Firebase Error : Key Empty")
             return
