@@ -9,7 +9,7 @@
         android:id="@+id/petLocationNewFragment"
         android:name="ie.setu.pupplan.ui.petLocationNew.PetLocationNewFragment"
         android:label="New PetLocation"
-        tools:layout="@layout/fragment_petLocation_new">
+        tools:layout="@layout/fragment_petlocation_new">
         <action
             android:id="@+id/action_petLocationNewFragment_to_petLocationListFragment"
             app:destination="@id/petLocationListFragment"
@@ -20,7 +20,7 @@
         android:id="@+id/petLocationListFragment"
         android:name="ie.setu.pupplan.ui.petLocationList.PetLocationListFragment"
         android:label="PetLocation List"
-        tools:layout="@layout/fragment_petLocation_list">
+        tools:layout="@layout/fragment_petlocation_list">
         <action
             android:id="@+id/action_petLocationListFragment_to_petLocationNewFragment"
             app:destination="@id/petLocationNewFragment"
@@ -41,12 +41,12 @@
         android:id="@+id/petLocationDetailFragment"
         android:name="ie.setu.pupplan.ui.petLocationDetail.PetLocationDetailFragment"
         android:label="PetLocation Detail"
-        tools:layout="@layout/fragment_petLocation_detail">
+        tools:layout="@layout/fragment_petlocation_detail">
         <action
             android:id="@+id/action_petLocationDetailFragment_to_petLocationListFragment"
             app:destination="@id/petLocationListFragment" />
         <argument
-            android:name="petLocationid"
+            android:name="petlocationid"
             app:argType="string" />
         <action
             android:id="@+id/action_petLocationDetailFragment_to_eventListFragment"
@@ -125,8 +125,8 @@
     <fragment
         android:id="@+id/eventMapFragment"
         android:name="ie.setu.pupplan.ui.eventMap.EventMapFragment"
-        android:label="fragment_event_map"
-        tools:layout="@layout/fragment_event_map" >
+        android:label="Event Location"
+        tools:layout="@layout/fragment_event_map">
         <argument
             android:name="location"
             app:argType="ie.setu.pupplan.models.Location" />
@@ -146,6 +146,19 @@
     <fragment
         android:id="@+id/eventsMapFragment"
         android:name="ie.setu.pupplan.ui.eventsMap.EventsMapFragment"
-        android:label="fragment_events_map"
-        tools:layout="@layout/fragment_events_map" />
+        android:label="Events Map"
+        tools:layout="@layout/fragment_events_map">
+        <action
+            android:id="@+id/action_eventsMapFragment_to_eventDetailFragment"
+            app:destination="@id/eventDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/favouritesMapFragment"
+        android:name="ie.setu.pupplan.ui.favouritesMap.FavouritesMapFragment"
+        android:label="Favourites Map"
+        tools:layout="@layout/fragment_favourites_map">
+        <action
+            android:id="@+id/action_favouritesMapFragment_to_eventDetailFragment"
+            app:destination="@id/eventDetailFragment" />
+    </fragment>
 </navigation>

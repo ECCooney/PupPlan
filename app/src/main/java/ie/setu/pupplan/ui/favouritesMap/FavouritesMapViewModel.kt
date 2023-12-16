@@ -1,19 +1,24 @@
-package ie.setu.pupplan.ui.eventsMap
-
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.maps.GoogleMap
 import com.google.firebase.auth.FirebaseUser
 import ie.setu.pupplan.firebase.FirebaseDBManager
-import ie.setu.pupplan.models.NewEvent
+import ie.setu.pupplan.models.Favourite
 import ie.setu.pupplan.models.PetLocationModel
 import timber.log.Timber
 import java.lang.Exception
 
-class EventsMapViewModel : ViewModel() {
-
+class FavouritesMapViewModel : ViewModel() {
     lateinit var map : GoogleMap
+
+    private val favouritesList =
+        MutableLiveData<List<Favourite>>()
+
+    val observableFavouritesList: LiveData<List<Favourite>>
+        get() = favouritesList
+
+    var liveFirebaseUser = MutableLiveData<FirebaseUser>()
 
     private val petLocationsList =
         MutableLiveData<List<PetLocationModel>>()
@@ -21,23 +26,24 @@ class EventsMapViewModel : ViewModel() {
     val observablePetLocationsList: LiveData<List<PetLocationModel>>
         get() = petLocationsList
 
-    var liveFirebaseUser = MutableLiveData<FirebaseUser>()
-
+    //function to load favourites belonging to user
     fun load() {
         try {
+            FirebaseDBManager.findUserUserFavourites(liveFirebaseUser.value?.uid!!,favouritesList)
             FirebaseDBManager.findUserAll(liveFirebaseUser.value?.uid!!,petLocationsList)
-            Timber.i("Report Load Success : ${petLocationsList.value.toString()}")
+            Timber.i("Report Load Success : ${favouritesList.value.toString()}")
         }
         catch (e: Exception) {
             Timber.i("Report Load Error : $e.message")
         }
     }
 
+    //function to load favourites belonging to other users
     fun loadAll() {
         try {
 
-            FirebaseDBManager.findAll(petLocationsList)
-            Timber.i("Report LoadAll Success : ${petLocationsList.value.toString()}")
+            FirebaseDBManager.findUserAllFavourites(liveFirebaseUser.value?.uid!!,favouritesList)
+            Timber.i("Report LoadAll Success : ${favouritesList.value.toString()}")
         }
         catch (e: Exception) {
             Timber.i("Report LoadAll Error : $e.message")

@@ -4,20 +4,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.maps.GoogleMap
+import com.google.firebase.auth.FirebaseUser
 import ie.setu.pupplan.firebase.FirebaseDBManager
+import ie.setu.pupplan.models.Favourite
 import ie.setu.pupplan.models.NewEvent
-import ie.setu.pupplan.models.PetLocationManager
 import ie.setu.pupplan.models.PetLocationModel
 import timber.log.Timber
 
 class EventDetailViewModel : ViewModel() {
-    private val event = MutableLiveData<NewEvent>()
 
     lateinit var map : GoogleMap
 
-    var observableEvent: LiveData<NewEvent>
-        get() = event
-        set(value) {event.value = value.value}
 
     private val petLocation = MutableLiveData<PetLocationModel>()
 
@@ -27,15 +24,15 @@ class EventDetailViewModel : ViewModel() {
             petLocation.value = value.value
         }
 
-    private lateinit var currentPetLocation : PetLocationModel
+    private val favourite = MutableLiveData<Favourite>()
 
-    fun getEvent(email: String, petLocationId: String, eventId: String): NewEvent? {
-        return PetLocationManager.findEventById(eventId, petLocationId)
-    }
+    var observableFavourite: LiveData<Favourite>
+        get() = favourite
+        set(value) {
+            favourite.value = value.value
+        }
 
     fun getPetLocation(userid: String, id: String) {
-        //var currentPetLocation = FirebaseDBManager.findPetLocationById(userid, id, petLocation)
-        //println("this is currentpetLocation $currentPetLocation")
         try {
             FirebaseDBManager.findPetLocationById(userid, id, petLocation)
             Timber.i(
@@ -57,16 +54,33 @@ class EventDetailViewModel : ViewModel() {
         }
     }
 
-    /*fun updateEvent(userid:String, event: NewEvent, petLocationId: String) {
-        var updatedPetLocation = PetLocationManager.findPetLocationById(userid, petLocationId, petLocation)
-        PetLocationManager.updateEvent(event, updatedPetLocation!!)
+    fun addFavourite(firebaseUser: MutableLiveData<FirebaseUser>, favourite: Favourite) {
+
+        try {
+            FirebaseDBManager.createFavourite(firebaseUser, favourite)
+            Timber.i("Detail update() Success : $favourite")
+        } catch (e: Exception) {
+            Timber.i("Detail update() Error : $e.message")
+        }
     }
 
-    fun deleteEvent(userid:String, eventId: String, petLocationId: String) {
-        var deletedEvent = PetLocationManager.findEventById(eventId, petLocationId)
-        println("this is deleted event $deletedEvent")
-        var deletedPetLocation = PetLocationManager.findPetLocationById(userid, petLocationId, petLocation)
-        println("this is deleted event petLocation $deletedPetLocation")
-        PetLocationManager.deleteEvent(deletedEvent!!, deletedPetLocation!!)
-    }*/
+    fun removeFavourite(userid: String, eventId: String) {
+        try {
+            FirebaseDBManager.deleteFavourite(userid, eventId)
+            Timber.i("Detail delete() Success : $eventId")
+        } catch (e: Exception) {
+            Timber.i("Detail delete() Error : $e.message")
+        }
+
+    }
+
+    fun updateFavourite(userid: String, event: NewEvent) {
+
+        try {
+            FirebaseDBManager.updateFavourite(userid, event)
+            Timber.i("Detail delete() Success : $event")
+        } catch (e: Exception) {
+            Timber.i("Detail delete() Error : $e.message")
+        }
+    }
 }

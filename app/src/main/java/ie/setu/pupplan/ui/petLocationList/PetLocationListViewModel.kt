@@ -12,9 +12,9 @@ import java.lang.Exception
 class PetLocationListViewModel : ViewModel() {
 
     private val petLocationsList =
-        MutableLiveData<List <PetLocationModel>>()
+        MutableLiveData<List<PetLocationModel>>()
 
-    val observablePetLocationsList: LiveData<List <PetLocationModel>>
+    val observablePetLocationsList: LiveData<List<PetLocationModel>>
         get() = petLocationsList
 
     var liveFirebaseUser = MutableLiveData<FirebaseUser>()
@@ -27,7 +27,6 @@ class PetLocationListViewModel : ViewModel() {
 
     fun load() {
         try {
-            //DonationManager.findAll(liveFirebaseUser.value?.email!!, donationsList)
             readOnly.value = false
             FirebaseDBManager.findUserAll(liveFirebaseUser.value?.uid!!,petLocationsList)
             Timber.i("Report Load Success : ${petLocationsList.value.toString()}")
@@ -50,12 +49,21 @@ class PetLocationListViewModel : ViewModel() {
 
     fun delete(userid: String, id: String) {
         try {
-            //DonationManager.delete(userid,id)
             FirebaseDBManager.delete(userid,id)
             Timber.i("Report Delete Success")
         }
         catch (e: Exception) {
             Timber.i("Report Delete Error : $e.message")
         }
+    }
+
+    fun removeFavourite(userid: String, eventId: String) {
+        try {
+            FirebaseDBManager.deleteFavourite(userid, eventId)
+            Timber.i("Detail delete() Success : $eventId")
+        } catch (e: Exception) {
+            Timber.i("Detail delete() Error : $e.message")
+        }
+
     }
 }

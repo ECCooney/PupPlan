@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.Activity
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
-
 val REQUEST_PERMISSIONS_REQUEST_CODE = 34
 
 fun checkLocationPermissions(activity: Activity) : Boolean {

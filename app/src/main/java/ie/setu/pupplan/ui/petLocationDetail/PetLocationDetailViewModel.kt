@@ -9,9 +9,9 @@ import timber.log.Timber
 
 class PetLocationDetailViewModel : ViewModel() {
 
-    private val petLocation = MutableLiveData <PetLocationModel>()
+    private val petLocation = MutableLiveData<PetLocationModel>()
 
-    var observablePetLocation: LiveData <PetLocationModel>
+    var observablePetLocation: LiveData<PetLocationModel>
         get() = petLocation
         set(value) {
             petLocation.value = value.value
@@ -19,8 +19,6 @@ class PetLocationDetailViewModel : ViewModel() {
 
 
     fun getPetLocation(userid: String, id: String) {
-        //var currentPetLocation = FirebaseDBManager.findPetLocationById(userid, id, petLocation)
-        //println("this is currentpetLocation $currentPetLocation")
         try {
             FirebaseDBManager.findPetLocationById(userid, id, petLocation)
             Timber.i(
@@ -35,7 +33,6 @@ class PetLocationDetailViewModel : ViewModel() {
 
     fun updatePetLocation(userid: String, id: String, petLocation: PetLocationModel) {
         try {
-            //petLocation.image = FirebaseImageManager.imageUriPetLocation.value.toString()
             FirebaseDBManager.update(userid, id, petLocation)
             Timber.i("Detail update() Success : $petLocation")
         } catch (e: Exception) {
@@ -52,5 +49,15 @@ class PetLocationDetailViewModel : ViewModel() {
         }
     }
 
+    fun removeFavourite(userid: String, eventId: String) {
+        try {
+            FirebaseDBManager.deleteFavourite(userid, eventId)
+            Timber.i("Detail delete() Success : $eventId")
+        } catch (e: Exception) {
+            Timber.i("Detail delete() Error : $e.message")
+        }
+    }
+
 }
+
 

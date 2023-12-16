@@ -8,7 +8,7 @@ import ie.setu.pupplan.firebase.FirebaseDBManager
 import ie.setu.pupplan.models.PetLocationModel
 
 
-class PetLocationNewViewModel : ViewModel() {
+class PetLocationlNewViewModel : ViewModel() {
 
     private val status = MutableLiveData<Boolean>()
 
@@ -16,11 +16,9 @@ class PetLocationNewViewModel : ViewModel() {
         get() = status
 
     fun addPetLocation(firebaseUser: MutableLiveData<FirebaseUser>, petLocation: PetLocationModel) {
-        //PetLocationManager.create(petLocation)
-        status.value = try {
-            //petLocation.image = FirebaseImageManager.imageUriPetLocation.value.toString()
-            FirebaseDBManager.create(firebaseUser, petLocation)
 
+        status.value = try {
+            FirebaseDBManager.create(firebaseUser, petLocation)
             true
         } catch (e: IllegalArgumentException) {
             false

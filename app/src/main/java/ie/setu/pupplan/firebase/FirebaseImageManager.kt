@@ -29,6 +29,7 @@ object FirebaseImageManager {
         return Random().nextLong()
     }
 
+    //function to check if profile pic already exists in storage
     fun checkStorageForExistingProfilePic(userid: String) {
         val imageRef = storage.child("photos").child("${userid}.jpg")
         val defaultImageRef = storage.child("homer.jpg")
@@ -43,6 +44,7 @@ object FirebaseImageManager {
         }
     }
 
+    //function to upload an image to Firebase storage
     fun uploadImageToFirebase(userid: String, bitmap: Bitmap, updating : Boolean, path: String) {
         // Get the data from an ImageView as bytes
         val imageRef = storage.child("photos").child("${userid}.jpg")
@@ -54,6 +56,7 @@ object FirebaseImageManager {
         val data = baos.toByteArray()
 
         imageRef.metadata.addOnSuccessListener { //File Exists
+            //if image exist it needs to be updated in database to account for change in reference
             if(updating) // Update existing Image
             {
                 uploadTask = imageRef.putBytes(data)
@@ -69,13 +72,14 @@ object FirebaseImageManager {
             uploadTask.addOnSuccessListener { ut ->
                 ut.metadata!!.reference!!.downloadUrl.addOnCompleteListener { task ->
                     imageUri.value = task.result!!
-                    // FirebaseDBManager.updateImageRef(userid,imageUri.value.toString())
                 }
             }
         }
     }
 
+    //function for updating user profile pic
     fun updateUserImage(userid: String, imageUri : Uri?, imageView: ImageView, updating : Boolean) {
+        //prepare image
         Picasso.get().load(imageUri)
             .resize(200, 200)
             .transform(customTransformation())
@@ -99,6 +103,7 @@ object FirebaseImageManager {
             })
     }
 
+    //function to provide default image for profile if non-initially available
     fun updateDefaultImage(userid: String, resource: Int, imageView: ImageView) {
         Picasso.get().load(resource)
             .resize(200, 200)
@@ -123,11 +128,13 @@ object FirebaseImageManager {
             })
     }
 
+    //function to upload petLocation image to Firebase cloud
     fun uploadPetLocationImageToFirebase(userid: String, fileName: String, bitmap: Bitmap, updating : Boolean, path: String) {
         // Get the data from an ImageView as bytes
-        val imageName = generateRandomId().toString()
+        //image ref based on name of image file
         val imageRef = storage.child("photos").child("${fileName}.jpg")
 
+        //check if image already exists
         imageRef.metadata.addOnSuccessListener { //File Exists
             imageRef.downloadUrl.addOnCompleteListener { task ->
                 imageUriPetLocation.value = task.result!!
@@ -140,6 +147,7 @@ object FirebaseImageManager {
             val baos = ByteArrayOutputStream()
             lateinit var uploadTask: UploadTask
 
+            // Get the data from an ImageView as bytes
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
             val data = baos.toByteArray()
             uploadTask = imageRef.putBytes(data)
@@ -151,11 +159,9 @@ object FirebaseImageManager {
                 }
             }
         }
-
-
-
     }
 
+    //function to prepare updated petLocation image
     fun updatePetLocationImage(userid: String, imageUri : Uri?, imageView: ImageView, updating : Boolean) {
         println("this is imageUri $imageUri")
         var fileName = imageUri?.lastPathSegment
@@ -183,15 +189,15 @@ object FirebaseImageManager {
             })
     }
 
+    //function to upload event images to Firebase cloud
     fun uploadEventImageToFirebase(userid: String, fileName: String, bitmap: Bitmap, updating : Boolean, imageName: String) {
         // Get the data from an ImageView as bytes
-        //val imageName = generateRandomId().toString()
+        //image named after file name
         val imageRef = storage.child("photos").child("${fileName}.jpg")
         println("this is imageRef $imageRef")
 
         imageRef.metadata.addOnSuccessListener { //File Exists
-
-
+            //selection to assign new image to specific image within event (1, 2, or 3)
             if (imageName == "eventImage") {
                 imageRef.downloadUrl.addOnCompleteListener { task ->
                     imageUriEvent.value = task.result!!
@@ -245,12 +251,9 @@ object FirebaseImageManager {
                 }
             }
         }
-
-
-
-
     }
 
+    //function to prepare updated event images
     fun updateEventImage(userid: String, imageUri : Uri?, imageView: ImageView, updating : Boolean, imageName: String) {
         println("this is initial passed imageUriEvent $imageUri")
         var fileName = imageUri?.lastPathSegment
@@ -278,3 +281,4 @@ object FirebaseImageManager {
             })
     }
 }
+

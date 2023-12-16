@@ -43,7 +43,7 @@ class PetLocationListFragment : Fragment(), PetLocationClickListener {
     lateinit var app: PupPlanApp
     private var _fragBinding: FragmentPetlocationListBinding? = null
     private val fragBinding get() = _fragBinding!!
-    val petLocationCategorys = arrayOf("Show All", "Hotel", "Pet Shop", "Outdoor Area", "Bar")
+    val petLocationCategorys = arrayOf("Show All", "Hotel", "Pet Shop", "Outdoor Area", "Bar/Restaurant")
     lateinit var loader : AlertDialog
     private val petLocationListViewModel: PetLocationListViewModel by activityViewModels()
     private val loggedInViewModel : LoggedInViewModel by activityViewModels()

@@ -62,7 +62,7 @@
             app:layout_constraintHorizontal_bias="0.052"
             app:layout_constraintStart_toEndOf="@+id/eventImageIcon"
             app:layout_constraintTop_toBottomOf="@id/eventTitle"
-            tools:text="Event Budget" />
+            tools:text="Event Cost" />
 
         <TextView
             android:id="@+id/eventDescription"
@@ -76,6 +76,20 @@
             app:layout_constraintStart_toEndOf="@+id/eventImageIcon"
             app:layout_constraintTop_toBottomOf="@id/eventCost"
             tools:text="A Description" />
+
+        <ImageView
+            android:id="@+id/imageFavourite"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="5dp"
+            app:layout_constraintStart_toEndOf="@id/eventTitle"
+
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@android:drawable/star_big_on" />
 
 
 

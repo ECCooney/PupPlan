@@ -1,6 +1,6 @@
 package ie.setu.pupplan.ui.petLocationDetail
 
-import android.R
+import ie.setu.pupplan.R
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -51,10 +51,9 @@ class PetLocationDetailFragment : Fragment() {
     var imageLoad: Boolean = false
     var events: MutableList<NewEvent>? = null
     var testing: Boolean = false
-
-    var petLocationCategory = "" // Current petLocation category
+    var petLocationCategory = "" // Current petLocation type
     var image: String = ""
-    val petLocationCategorys = arrayOf("New Builds", "Renovations", "Interiors", "Landscaping", "Commercial", "Other") // Creating array of different petLocation categorys
+    val petLocationCategorys = arrayOf("Show All", "Hotel", "Pet Shop", "Outdoor Area", "Bar/Restaurant") // Creating array of different petLocation types
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?
@@ -64,8 +63,6 @@ class PetLocationDetailFragment : Fragment() {
         registerImagePickerCallback()
 
         detailViewModel = ViewModelProvider(this).get(PetLocationDetailViewModel::class.java)
-        //detailViewModel.observablePetLocation.observe(viewLifecycleOwner, Observer { render() })
-
 
         detailViewModel.observablePetLocation.observe(viewLifecycleOwner, Observer {
                 petLocation ->
@@ -85,23 +82,6 @@ class PetLocationDetailFragment : Fragment() {
 
         setupMenu()
 
-
-
-
-        /*fragBinding.editPetLocationButton.setOnClickListener {
-            detailViewModel.updatePetLocation(loggedInViewModel.liveFirebaseUser.value?.email!!,
-                args.petLocationid, fragBinding.petLocationvm?.observablePetLocation!!.value!!)
-            println(fragBinding.petLocationvm?.observablePetLocation!!.value!!)
-
-            findNavController().navigateUp()
-        }*/
-
-        /*fragBinding.deletePetLocationButton.setOnClickListener {
-            petLocationListViewModel.delete(loggedInViewModel.liveFirebaseUser.value?.email!!,
-                detailViewModel.observablePetLocation.value!!)
-            findNavController().navigateUp()
-        }*/
-
         fragBinding.btnGoToEvents.setOnClickListener {
             val action = PetLocationDetailFragmentDirections.actionPetLocationDetailFragmentToEventListFragment(
                 args.petLocationid
@@ -109,81 +89,23 @@ class PetLocationDetailFragment : Fragment() {
             findNavController().navigate(action)
         }
 
-        //var portId = detailViewModel.petLocation.value?.id
-
-        /*var petLocation = detailViewModel.getPetLocation(loggedInViewModel.liveFirebaseUser.value?.uid!!, args.petLocationid)
-        //var petLocation = detailViewModel.observablePetLocation.value
-
-        var userUid = loggedInViewModel.liveFirebaseUser.value?.uid!!
-
-
-
-        println("this is uid $userUid")
-        println("this is petLocationid ${args.petLocationid}")
-
-
-
-        println("this is petLocation $petLocation")
-        fragBinding.petLocationTitle.setText(petLocation?.title)
-        fragBinding.description.setText(petLocation?.description)
-        petLocationCategory = petLocation?.category.toString()
-        image = petLocation?.image.toString()*/
-
-        /*val spinner = fragBinding.petLocationCategorySpinner
-        val adapter = activity?.applicationContext?.let { ArrayAdapter(it, R.layout.simple_spinner_item, petLocationCategorys) } as SpinnerAdapter
-        spinner.adapter = adapter
-        val spinnerPosition = petLocationCategorys.indexOf(petLocationCategory)
-        spinner.setSelection(spinnerPosition)
-        spinner.onItemSelectedListener = object :
-            AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>,
-                                        view: View?, position: Int, id: Long) {
-                petLocationCategory = petLocationCategorys[position] // Index of array and spinner position used to select petLocation category
-                // The toast message was taken out because it was annoying, but can be reinstated if wanted
-                /*Toast.makeText(this@PetLocationActivity,
-                    getString(R.string.selected_item) + " " +
-                            "" + petLocationCategorys[position], Toast.LENGTH_SHORT).show()*/
-                println("this is petLocationCategory: $petLocationCategory")
-            }
-            // No problem if nothing selected
-            override fun onNothingSelected(parent: AdapterView<*>) {
-            }
-        }*/
-
-        /*Picasso.get()
-            .load(petLocation?.image)
-            .resize(450, 420)
-            .centerCrop()
-            .into(fragBinding.petLocationImage)
-
-        fragBinding.chooseImage.setOnClickListener {
-            showImagePicker(imageIntentLauncher)
-        }*/
-
         fragBinding.chooseImage.setOnClickListener {
             showImagePicker(imageIntentLauncher)
         }
-
-        setUpdateButtonListener(fragBinding)
-        setDeleteButtonListener(fragBinding)
 
         return root
     }
 
     private fun render(petLocation: PetLocationModel) {
-        //fragBinding.petLocationTitle.setText("This is Title")
-        //fragBinding.editUpvotes.setText("0")
         fragBinding.petLocationvm = detailViewModel
-        //Timber.i("Retrofit fragBinding.donationvm == $fragBinding.donationvm")
-        //fragBinding.petLocationTitle.setText(petLocation?.title)
-        //fragBinding.description.setText(petLocation?.description)
+        fragBinding.petLocationName.setText(petLocation.title)
         events = petLocation.events
         petLocationCategory = petLocation?.category.toString()
         if (!imageLoad) {
             image = petLocation?.image.toString()
         }
         val spinner = fragBinding.petLocationCategorySpinner
-        val adapter = activity?.applicationContext?.let { ArrayAdapter(it, R.layout.simple_spinner_item, petLocationCategorys) } as SpinnerAdapter
+        val adapter = activity?.applicationContext?.let { ArrayAdapter(it, android.R.layout.simple_spinner_item, petLocationCategorys) } as SpinnerAdapter
         spinner.adapter = adapter
         val spinnerPosition = petLocationCategorys.indexOf(petLocationCategory)
         spinner.setSelection(spinnerPosition)
@@ -191,11 +113,7 @@ class PetLocationDetailFragment : Fragment() {
             AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>,
                                         view: View?, position: Int, id: Long) {
-                petLocationCategory = petLocationCategorys[position] // Index of array and spinner position used to select petLocation category
-                // The toast message was taken out because it was annoying, but can be reinstated if wanted
-                /*Toast.makeText(this@PetLocationActivity,
-                    getString(R.string.selected_item) + " " +
-                            "" + petLocationCategorys[position], Toast.LENGTH_SHORT).show()*/
+                petLocationCategory = petLocationCategorys[position] // Index of array and spinner position used to select petLocation type
                 println("this is petLocationCategory: $petLocationCategory")
             }
             // No problem if nothing selected
@@ -205,13 +123,12 @@ class PetLocationDetailFragment : Fragment() {
         println("petLocation.image in render ${petLocation?.image}")
         println("image in render $image")
         if (image.isNotEmpty()) {
+            fragBinding.chooseImage.setText(ie.setu.pupplan.R.string.button_changeImage)
             Picasso.get()
                 .load(image)
                 .resize(450, 420)
                 .centerCrop()
                 .into(fragBinding.petLocationImage) }
-
-
     }
 
     private fun getCurrentPetLocation(petLocation: PetLocationModel) {
@@ -219,36 +136,11 @@ class PetLocationDetailFragment : Fragment() {
         println("this is currentPetLocation3 $currentPetLocation")
     }
 
-    fun setUpdateButtonListener(layout: FragmentPetlocationDetailBinding) {
-        fragBinding.editPetLocationButton.setOnClickListener {
-            if (layout.petLocationTitle.text.isEmpty()) {
-                Toast.makeText(context, ie.setu.pupplan.R.string.enter_petLocation_title, Toast.LENGTH_LONG).show()
-            } else {
-                if(imageLoad) {
-                    image = FirebaseImageManager.imageUriPetLocation.value.toString()
-                    println("tell me imageUriValue ${FirebaseImageManager.imageUriPetLocation.value.toString()}")
-                }
-                detailViewModel.updatePetLocation(loggedInViewModel.liveFirebaseUser.value?.uid!!,
-                    args.petLocationid, PetLocationModel(uid = args.petLocationid, title = layout.petLocationTitle.text.toString(), description = layout.description.text.toString(), category = petLocationCategory,
-                        email = loggedInViewModel.liveFirebaseUser.value?.email!!, events = events, profilePic = FirebaseImageManager.imageUri.value.toString(), image = image))
-                println(petLocationCategory)
-            }
-            findNavController().navigate(ie.setu.pupplan.R.id.action_petLocationDetailFragment_to_petLocationListFragment)
-        }
-    }
-
-    fun setDeleteButtonListener(layout: FragmentPetlocationDetailBinding) {
-        fragBinding.deletePetLocationButton.setOnClickListener {
-            detailViewModel.deletePetLocation(loggedInViewModel.liveFirebaseUser.value?.uid!!, args.petLocationid)
-            findNavController().navigate(ie.setu.pupplan.R.id.action_petLocationDetailFragment_to_petLocationListFragment)
-        }
-
-    }
-
     private fun setupMenu() {
         (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
             override fun onPrepareMenu(menu: Menu) {
                 // Handle for example visibility of menu items
+                (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
             }
 
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -258,11 +150,9 @@ class PetLocationDetailFragment : Fragment() {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 // Validate and handle the selected menu item
                 when (menuItem.itemId) {
-                    ie.setu.pupplan.R.id.item_home -> {
-                        val action = PetLocationDetailFragmentDirections.actionPetLocationDetailFragmentToPetLocationListFragment()
-                        findNavController().navigate(action)
+                    ie.setu.pupplan.R.id.item_cancel -> {
+                        findNavController().navigate(ie.setu.pupplan.R.id.action_petLocationDetailFragment_to_petLocationListFragment)
                     }
-
                     ie.setu.pupplan.R.id.item_petLocation_save -> {
                         if (fragBinding.petLocationTitle.text.isEmpty()) {
                             Toast.makeText(context, ie.setu.pupplan.R.string.enter_petLocation_title, Toast.LENGTH_LONG).show()
@@ -280,10 +170,10 @@ class PetLocationDetailFragment : Fragment() {
                     }
 
                     ie.setu.pupplan.R.id.item_petLocation_delete -> {
-                        detailViewModel.deletePetLocation(
-                            loggedInViewModel.liveFirebaseUser.value?.email!!,
-                            args.petLocationid
-                        )
+                        events?.forEach {
+                            detailViewModel.removeFavourite(loggedInViewModel.liveFirebaseUser.value?.uid!!, it.eventId)
+                        }
+                        detailViewModel.deletePetLocation(loggedInViewModel.liveFirebaseUser.value?.uid!!, args.petLocationid)
                         findNavController().navigate(ie.setu.pupplan.R.id.action_petLocationDetailFragment_to_petLocationListFragment)
 
                     }
@@ -313,12 +203,6 @@ class PetLocationDetailFragment : Fragment() {
                             Timber.i("Got Result ${readImageUri(result.resultCode, result.data).toString()}")
                             image = result.data!!.data!!.toString()
                             println("image in imageLauncher $image")
-                            // Picasso used to get images, as well as standardising sizes and cropping as necessary
-                            /*Picasso.get()
-                                .load(image)
-                                .centerCrop()
-                                .resize(450, 420)
-                                .into(fragBinding.petLocationImage)*/
                             fragBinding.chooseImage.setText(ie.setu.pupplan.R.string.button_changeImage)
                             FirebaseImageManager
                                 .updatePetLocationImage(loggedInViewModel.liveFirebaseUser.value!!.uid,
@@ -327,8 +211,7 @@ class PetLocationDetailFragment : Fragment() {
                                     true)
                             imageLoad = true
                             testing = true
-
-                        } // end of if
+                        }
                     }
                     AppCompatActivity.RESULT_CANCELED -> { } else -> { }
                 }

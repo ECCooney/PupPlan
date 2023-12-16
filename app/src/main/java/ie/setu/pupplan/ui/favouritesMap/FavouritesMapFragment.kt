@@ -1,5 +1,7 @@
-package ie.setu.pupplan.ui.eventsMap
+package ie.setu.pupplan.ui.favouritesMap
 
+import FavouritesMapViewModel
+import ie.setu.pupplan.R
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -29,24 +31,25 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.squareup.picasso.Picasso
-import ie.setu.pupplan.R
-import ie.setu.pupplan.databinding.FragmentEventsMapBinding
+import ie.setu.pupplan.databinding.FragmentFavouritesMapBinding
+import ie.setu.pupplan.models.Favourite
 import ie.setu.pupplan.models.Location
 import ie.setu.pupplan.models.NewEvent
 import ie.setu.pupplan.models.PetLocationModel
 import ie.setu.pupplan.ui.auth.LoggedInViewModel
+import ie.setu.pupplan.ui.eventsMap.EventsMapViewModel
 
-class EventsMapFragment : Fragment(), GoogleMap.OnMarkerClickListener, OnMapReadyCallback {
+class FavouritesMapFragment : Fragment(), GoogleMap.OnMarkerClickListener, OnMapReadyCallback {
 
-    private lateinit var eventsMapViewModel: EventsMapViewModel
+    private lateinit var favouritesMapViewModel: FavouritesMapViewModel
     var enabler: String = ""
     var enablerSwitch: Boolean = true
     val petLocationCategorys = arrayOf("Show All", "Hotel", "Pet Shop", "Outdoor Area", "Bar/Restaurant")
     var petLocationCategory = "Show All" // Selected petLocation type for filtering list
-    var userEvents = ArrayList<NewEvent>()
-    var petLocationList = ArrayList<PetLocationModel>()
+    var favouriteEvents = ArrayList<NewEvent>()
+    var favouriteList = ArrayList<Favourite>()
     private val loggedInViewModel : LoggedInViewModel by activityViewModels()
-    private var _fragBinding: FragmentEventsMapBinding? = null
+    private var _fragBinding: FragmentFavouritesMapBinding? = null
     private val fragBinding get() = _fragBinding!!
     var location = Location()
     var event = NewEvent()
@@ -60,27 +63,36 @@ class EventsMapFragment : Fragment(), GoogleMap.OnMarkerClickListener, OnMapRead
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-        _fragBinding = FragmentEventsMapBinding.inflate(inflater, container, false)
+        //setting bindings with xml
+        _fragBinding = FragmentFavouritesMapBinding.inflate(inflater, container, false)
         val root = fragBinding.root
         println("testing testing")
         setupMenu()
 
-        eventsMapViewModel = ViewModelProvider(this).get(EventsMapViewModel::class.java)
-        //eventsMapViewModel.load()
+        //connecting to view model
+        favouritesMapViewModel = ViewModelProvider(this).get(FavouritesMapViewModel::class.java)
 
-        var test = eventsMapViewModel.load()
+        //needed to initiate engagement with the model
+        var test = favouritesMapViewModel.load()
         println("this is test $test")
 
-        eventsMapViewModel.observablePetLocationsList.observe(viewLifecycleOwner, Observer {
+        //call petLocations from model
+        favouritesMapViewModel.observablePetLocationsList.observe(viewLifecycleOwner, Observer {
                 petLocations ->
             petLocations?.let {
-                render(petLocations as ArrayList<PetLocationModel>)
-                println("this is the petLocations on the map $petLocations")
-                configureEnabler(petLocations)
+                configureEnabler(petLocations as ArrayList<PetLocationModel>)
             }
         })
 
+        //call favourites from model
+        favouritesMapViewModel.observableFavouritesList.observe(viewLifecycleOwner, Observer {
+                favourites ->
+            favourites?.let {
+                render(favourites as ArrayList<Favourite>)
+            }
+        })
+
+        //setting up spinner for filtering type
         val spinner = fragBinding.eventCategorySpinner
         val adapter = activity?.applicationContext?.let { ArrayAdapter(it, android.R.layout.simple_spinner_item, petLocationCategorys) } as SpinnerAdapter
         spinner.adapter = adapter
@@ -88,14 +100,14 @@ class EventsMapFragment : Fragment(), GoogleMap.OnMarkerClickListener, OnMapRead
             AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>,
                                         view: View?, position: Int, id: Long) {
+                //setting type variable
                 petLocationCategory = petLocationCategorys[position]
                 println("this is petLocationCategory: $petLocationCategory")
-                userEvents.clear()
-                eventsMapViewModel.observablePetLocationsList.observe(viewLifecycleOwner, Observer {
-                        petLocations ->
-                    petLocations?.let {
-                        render(petLocations as ArrayList<PetLocationModel>)
-                        println("testing this is working")
+                favouriteEvents.clear()
+                favouritesMapViewModel.observableFavouritesList.observe(viewLifecycleOwner, Observer {
+                        favourites ->
+                    favourites?.let {
+                        render(favourites as ArrayList<Favourite>)
                     }
                 })
             }
@@ -110,7 +122,9 @@ class EventsMapFragment : Fragment(), GoogleMap.OnMarkerClickListener, OnMapRead
         super.onViewCreated(view, savedInstanceState)
     }
 
+    //enabler variable is the petLocation number of a user to allow for them to access other users' events, i.e. required for accessing EventDetailsFragment (in addition to their user ID)
     private fun configureEnabler(petLocationsList: ArrayList<PetLocationModel>) {
+        //only an option to use if the user has their own petLocation already, otherwise they can't access other users' petLocations
         if (petLocationsList.isNotEmpty() && enablerSwitch) {
             val userPetLocations = petLocationsList.filter { p -> p.email == loggedInViewModel.liveFirebaseUser.value!!.email }
             val firstPetLocation = userPetLocations[0]
@@ -120,13 +134,14 @@ class EventsMapFragment : Fragment(), GoogleMap.OnMarkerClickListener, OnMapRead
         enablerSwitch = false
     }
 
-    private fun render(petLocationsList: ArrayList<PetLocationModel>) {
+    private fun render(favouritesList: ArrayList<Favourite>) {
+        //adjust petLocation list based on spinner selection
         if (petLocationCategory == "Show All") {
-            petLocationList = petLocationsList
+            favouriteList = favouritesList
         } else {
-            petLocationList = ArrayList(petLocationsList.filter { p -> p.category == petLocationCategory })
+            favouriteList = ArrayList(favouritesList.filter { p -> p.eventFavourite?.eventPetLocationCategory == petLocationCategory })
         }
-        println("this is petLocationList $petLocationList")
+        println("this is favouriteList $favouriteList")
         val mapFragment = childFragmentManager
             .findFragmentById(R.id.mapView) as SupportMapFragment
         mapFragment.getMapAsync {
@@ -135,31 +150,34 @@ class EventsMapFragment : Fragment(), GoogleMap.OnMarkerClickListener, OnMapRead
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        eventsMapViewModel.map = googleMap
-        println("test  petLocationList $petLocationList")
-        petLocationList.forEach {
-            val petLocationEvents = it.events?.toMutableList()
-            if (petLocationEvents != null) {
-                userEvents += petLocationEvents.toMutableList()
+        //calling map from view model
+        favouritesMapViewModel.map = googleMap
+        println("test  favouriteList $favouriteList")
+        //rendered favourite list
+        favouriteList.forEach {
+            val events = it.eventFavourite
+            if (events != null) {
+                favouriteEvents += events
             }
         }
-        eventsMapViewModel.map.setOnMarkerClickListener(this)
-        eventsMapViewModel.map.uiSettings.setZoomControlsEnabled(true)
-        println("this is userEvents: $userEvents")
-        eventsMapViewModel.map.clear()
-        userEvents.forEach { // If show all selected, use function for finding all events from JSON file
+        favouritesMapViewModel.map.setOnMarkerClickListener(this)
+        favouritesMapViewModel.map.uiSettings.setZoomControlsEnabled(true)
+        println("this is favouriteEvents: $favouriteEvents")
+        favouritesMapViewModel.map.clear()
+        //process markers for each favourited event
+        favouriteEvents.forEach {
             val loc = LatLng(it.lat, it.lng)
             val options = MarkerOptions().title(it.eventTitle).position(loc)
-            eventsMapViewModel.map.addMarker(options)?.tag = it.eventId
-            eventsMapViewModel.map.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 15f))
+            favouritesMapViewModel.map.addMarker(options)?.tag = it.eventId
+            favouritesMapViewModel.map.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 15f))
         }
     }
 
     override fun onMarkerClick(marker: Marker): Boolean {
         val tag =marker.tag as String
-        val event = userEvents.find { p -> p.eventId == tag }
+        val event = favouriteEvents.find { p -> p.eventId == tag }
         println("this is event: $event")
-        // Display information about a event upon clicking on tag, based on event ID
+        // display information about a event upon clicking on tag, based on event ID
         if (event != null) {
             fragBinding.currentTitle.text = event.eventTitle
             fragBinding.currentDescription.text = event.eventDescription
@@ -176,7 +194,7 @@ class EventsMapFragment : Fragment(), GoogleMap.OnMarkerClickListener, OnMapRead
                 }
                 //otherwise, the enabler remains a random petLocation id related to the current user because if it related to another user's petLocation they wouldn't have authorisation
                 fragBinding.cardView.setOnClickListener {
-                    val action = EventsMapFragmentDirections.actionEventsMapFragmentToEventDetailFragment(
+                    val action = FavouritesMapFragmentDirections.actionFavouritesMapFragmentToEventDetailFragment(
                         event,
                         enabler,
                         Location(lat = event.lat, lng = event.lng, zoom = 15f)
@@ -184,7 +202,6 @@ class EventsMapFragment : Fragment(), GoogleMap.OnMarkerClickListener, OnMapRead
                     findNavController().navigate(action)
                 }
             }
-
         }
         return false
     }
@@ -197,22 +214,21 @@ class EventsMapFragment : Fragment(), GoogleMap.OnMarkerClickListener, OnMapRead
 
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.menu_events_map, menu)
-
+                //use of toggle button to switch between favourites belonging to user or all users
                 val item = menu.findItem(R.id.toggleEvents) as MenuItem
                 item.setActionView(R.layout.togglebutton_layout)
                 val toggleEvents: SwitchCompat = item.actionView!!.findViewById(R.id.toggleButton)
                 toggleEvents.isChecked = false
 
                 toggleEvents.setOnCheckedChangeListener { _, isChecked ->
-                    userEvents.clear()
+                    favouriteEvents.clear()
                     if (isChecked) {
-                        eventsMapViewModel.loadAll()
-                        fragBinding.mapTitle.setText("All Events")
-
+                        favouritesMapViewModel.loadAll()
+                        fragBinding.mapTitle.setText("All Favourites")
                     }
                     else {
-                        eventsMapViewModel.load()
-                        fragBinding.mapTitle.setText("My Events")
+                        favouritesMapViewModel.load()
+                        fragBinding.mapTitle.setText("My Favourites")
 
                     }
                 }
@@ -233,12 +249,12 @@ class EventsMapFragment : Fragment(), GoogleMap.OnMarkerClickListener, OnMapRead
 
     override fun onResume() {
         super.onResume()
-        //fragBinding.mapView.onResume()
         loggedInViewModel.liveFirebaseUser.observe(viewLifecycleOwner, Observer { firebaseUser ->
             if (firebaseUser != null) {
-                eventsMapViewModel.liveFirebaseUser.value = firebaseUser
-                eventsMapViewModel.load()
+                favouritesMapViewModel.liveFirebaseUser.value = firebaseUser
+                favouritesMapViewModel.load()
             }
         })
     }
+
 }

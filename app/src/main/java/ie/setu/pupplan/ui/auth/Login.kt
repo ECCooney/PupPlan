@@ -1,5 +1,14 @@
 package ie.setu.pupplan.ui.auth
 
+//import androidx.appcompat.app.AppCompatActivity
+
+
+/*class Login : AppCompatActivity()
+{
+
+}*/
+
+
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
@@ -8,15 +17,15 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import ie.setu.pupplan.R
+import ie.setu.pupplan.databinding.LoginBinding
+import ie.setu.pupplan.ui.home.Home
+import timber.log.Timber
+import androidx.lifecycle.Observer
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.snackbar.Snackbar
-import ie.setu.pupplan.R
-import ie.setu.pupplan.ui.home.Home
-import timber.log.Timber
-import androidx.lifecycle.Observer
-import ie.setu.pupplan.databinding.LoginBinding
 
 class Login : AppCompatActivity() {
 
@@ -26,6 +35,7 @@ class Login : AppCompatActivity() {
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //setting up bindings
         loginBinding = LoginBinding.inflate(layoutInflater)
         setContentView(loginBinding.root)
 
@@ -37,20 +47,19 @@ class Login : AppCompatActivity() {
             createAccount(loginBinding.fieldEmail.text.toString(),
                 loginBinding.fieldPassword.text.toString())
         }
-        loginBinding.googleSignInButton.setOnClickListener { googleSignIn() }
         loginBinding.googleSignInButton.setSize(SignInButton.SIZE_WIDE)
         loginBinding.googleSignInButton.setColorScheme(0)
+        loginBinding.googleSignInButton.setOnClickListener { googleSignIn() }
     }
 
     public override fun onStart() {
         super.onStart()
         // Check if user is signed in (non-null) and update UI accordingly.
+        //connecting with view model
         loginRegisterViewModel = ViewModelProvider(this).get(LoginRegisterViewModel::class.java)
-        loginRegisterViewModel.liveFirebaseUser.observe(this)
-        { firebaseUser ->
-            if (firebaseUser != null)
-                startActivity(Intent(this, Home::class.java))
-        }
+        loginRegisterViewModel.liveFirebaseUser.observe(this, Observer
+        { firebaseUser -> if (firebaseUser != null)
+            startActivity(Intent(this, Home::class.java)) })
 
         loginRegisterViewModel.firebaseAuthManager.errorStatus.observe(this, Observer
         { status -> checkStatus(status) })
@@ -58,12 +67,14 @@ class Login : AppCompatActivity() {
         setupGoogleSignInCallback()
     }
 
+    //function for Google signin
     private fun googleSignIn() {
         val signInIntent = loginRegisterViewModel.firebaseAuthManager
             .googleSignInClient.value!!.signInIntent
 
         startForResult.launch(signInIntent)
     }
+
     private fun setupGoogleSignInCallback() {
         startForResult =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -80,7 +91,7 @@ class Login : AppCompatActivity() {
                             Snackbar.make(loginBinding.loginLayout, "Authentication Failed.",
                                 Snackbar.LENGTH_SHORT).show()
                         }
-                        Timber.i("Pupplan Google Result $result.data")
+                        Timber.i("Google Result $result.data")
                     }
                     RESULT_CANCELED -> {
 
@@ -89,10 +100,10 @@ class Login : AppCompatActivity() {
             }
     }
 
-    //Required to exit app from Login Screen - must investigate this further
+
     override fun onBackPressed() {
         super.onBackPressed()
-        Toast.makeText(this,"Click again to Close App...", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this,"Click again to Close App...",Toast.LENGTH_LONG).show()
         finish()
     }
 
