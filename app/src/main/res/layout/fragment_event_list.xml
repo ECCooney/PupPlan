@@ -63,7 +63,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:fontFamily="@font/oswald"
-        android:text="@string/btn_budget_filter"
+        android:text="@string/btn_cost_filter"
         android:textColor="@color/colorSubTitles"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -136,7 +136,6 @@
         android:layout_margin="@dimen/fab_margin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@android:drawable/ic_input_add"
-        android:contentDescription="TODO" />
+        app:srcCompat="@android:drawable/ic_input_add" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

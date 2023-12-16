@@ -22,4 +22,10 @@
         android:title="@string/menu_cancelPetLocation"
         app:showAsAction="always" />
 
+    <item
+        android:id="@+id/toggleEvents"
+        android:title=""
+        app:actionLayout="@layout/togglebutton_layout"
+        app:showAsAction="always" />
+
 </menu>

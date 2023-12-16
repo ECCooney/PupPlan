@@ -17,17 +17,19 @@ import timber.log.Timber
 class FirebaseAuthManager(application: Application) {
 
     private var application: Application? = null
-    var googleSignInClient = MutableLiveData<GoogleSignInClient>()
 
     var firebaseAuth: FirebaseAuth? = null
     var liveFirebaseUser = MutableLiveData<FirebaseUser>()
     var loggedOut = MutableLiveData<Boolean>()
     var errorStatus = MutableLiveData<Boolean>()
+    var googleSignInClient = MutableLiveData<GoogleSignInClient>()
 
     init {
+        //initialising Firebase authorisation for application
         this.application = application
         firebaseAuth = FirebaseAuth.getInstance()
 
+        //if user is authorised, assign them as current user and check if there is an existing profile picture for them
         if (firebaseAuth!!.currentUser != null) {
             liveFirebaseUser.postValue(firebaseAuth!!.currentUser)
             loggedOut.postValue(false)
@@ -38,7 +40,7 @@ class FirebaseAuthManager(application: Application) {
         configureGoogleSignIn()
     }
 
-
+    //function for configuring Google sign-in
     private fun configureGoogleSignIn() {
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -49,8 +51,9 @@ class FirebaseAuthManager(application: Application) {
         googleSignInClient.value = GoogleSignIn.getClient(application!!.applicationContext,gso)
     }
 
+    //function for using Google authorisation to provide credentials (token) for signing in.
     fun firebaseAuthWithGoogle(acct: GoogleSignInAccount) {
-        Timber.i( "Pupplan firebaseAuthWithGoogle:" + acct.id!!)
+        Timber.i( "firebaseAuthWithGoogle:" + acct.id!!)
 
         val credential = GoogleAuthProvider.getCredential(acct.idToken, null)
         firebaseAuth!!.signInWithCredential(credential)
@@ -68,6 +71,7 @@ class FirebaseAuthManager(application: Application) {
             }
     }
 
+    //if Google authorisation not used, email password combo can be used for login
     fun login(email: String?, password: String?) {
         firebaseAuth!!.signInWithEmailAndPassword(email!!, password!!)
             .addOnCompleteListener(application!!.mainExecutor, { task ->
@@ -81,6 +85,7 @@ class FirebaseAuthManager(application: Application) {
             })
     }
 
+    //registration of new email password combo for signing in
     fun register(email: String?, password: String?) {
         firebaseAuth!!.createUserWithEmailAndPassword(email!!, password!!)
             .addOnCompleteListener(application!!.mainExecutor, { task ->
@@ -94,10 +99,11 @@ class FirebaseAuthManager(application: Application) {
             })
     }
 
+    //signing out user
     fun logOut() {
         firebaseAuth!!.signOut()
-        googleSignInClient.value!!.signOut()
         loggedOut.postValue(true)
         errorStatus.postValue(false)
+        googleSignInClient.value!!.signOut()
     }
 }

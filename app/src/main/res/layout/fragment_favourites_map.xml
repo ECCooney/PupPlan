@@ -3,10 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/eventsMapFragment"
+    android:id="@+id/favouritesMapFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.eventsMap.EventsMapFragment">
+    tools:context=".ui.favouritesMap.FavouritesMapFragment">
 
     <Spinner
         android:id="@+id/eventCategorySpinner"
@@ -23,8 +23,8 @@
         android:id="@+id/mapTitle"
         android:layout_width="175dp"
         android:layout_height="21dp"
-        android:fontFamily="@font/anton"
-        android:text="@string/my_events"
+        android:fontFamily="@font/oswald"
+        android:text="@string/my_favourites"
         android:textColor="@color/colorTitles"
         android:textSize="16sp"
         android:layout_marginTop="8dp"
@@ -79,7 +79,7 @@
                 android:id="@+id/currentTitle"
                 android:layout_width="175dp"
                 android:layout_height="21dp"
-                android:fontFamily="@font/anton"
+                android:fontFamily="@font/oswald"
                 android:text="@string/event_title_placeholder"
                 android:textColor="@color/colorTitles"
                 android:textSize="16sp"
@@ -95,7 +95,7 @@
                 android:layout_width="173dp"
                 android:layout_height="21dp"
                 android:layout_marginTop="4dp"
-                android:fontFamily="@font/anton"
+                android:fontFamily="@font/oswald"
                 android:text="@string/event_description_placeholder"
                 app:layout_constraintBottom_toTopOf="@+id/currentEmail"
                 app:layout_constraintTop_toBottomOf="@+id/currentTitle"
@@ -108,14 +108,13 @@
                 android:layout_width="173dp"
                 android:layout_height="48dp"
                 android:layout_marginBottom="18dp"
-                android:fontFamily="@font/anton"
+                android:fontFamily="@font/oswald"
                 android:text="@string/event_email_placeholder"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/currentImage"
                 app:layout_constraintHorizontal_bias="0.521"
                 app:layout_constraintStart_toStartOf="parent" />
-
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

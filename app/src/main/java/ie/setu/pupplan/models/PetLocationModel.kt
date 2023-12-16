@@ -28,7 +28,7 @@ data class PetLocationModel(var uid: String? = "",
             "image" to image,
             "email" to email,
             "profilePic" to profilePic,
-            "events" to events
+            "events" to events,
         )
     }
 }
@@ -48,7 +48,13 @@ data class NewEvent(var eventId: String = "",
                     var eventCost: String = "",
                      var eventImage: String = "",
                     var eventImage2: String = "",
-                    var eventImage3: String = ""): Parcelable
+                    var eventImage3: String = "",
+                    var eventUserId: String = "",
+                    var eventUserEmail: String = "",
+                    var eventPetLocationCategory: String = "",
+                    var eventFavourites: MutableList<String>? = null,
+
+    ): Parcelable
 {
     @Exclude
     fun toMap(): Map<String, Any?> {
@@ -66,6 +72,10 @@ data class NewEvent(var eventId: String = "",
             "eventImage2" to eventImage2,
             "eventImage2" to eventImage2,
             "eventCost" to eventCost,
+            "eventUserId" to eventUserId,
+            "eventUserEmail" to eventUserEmail,
+            "eventFavourites" to eventFavourites,
+            "eventPetLocationCategory" to eventPetLocationCategory
         )
     }
 }
@@ -82,4 +92,18 @@ fun toMap(): Map<String, Any?> {
     "zoom" to zoom
     return mapOf()
 }
+}
+
+@IgnoreExtraProperties
+@Parcelize
+data class Favourite    (var uid: String? = "",
+                         var eventFavourite: NewEvent? = null) : Parcelable
+{
+    @Exclude
+    fun toMap(): Map<String, Any?> {
+        return mapOf(
+            "uid" to uid,
+            "evemtFavourite" to eventFavourite
+        )
+    }
 }

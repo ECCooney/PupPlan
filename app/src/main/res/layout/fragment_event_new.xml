@@ -87,7 +87,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
                     android:fontFamily="@font/oswald"
-                    android:text="@string/event_budget_label"
+                    android:text="@string/event_cost_label"
                     android:textColor="@color/colorSubTitles"
                     android:textSize="16sp" />
 

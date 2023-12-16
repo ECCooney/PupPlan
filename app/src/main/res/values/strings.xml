@@ -23,9 +23,9 @@
     <string name="nav_header_desc">Navigation header</string>
 
     <string name="action_about">About Us</string>
-    <string name="aboutus_title">Homer for President !!</string>
-    <string name="aboutus_message">Hi, I\'m Homer\n\nPlease vote for me.\n\n Please Please Please Please!!</string>
-
+    <string name="aboutus_title">Welcome to Pupplan !!</string>
+    <string name="aboutus_message">Thanks for Using PupPlan\n\nA Better Way To Display Your Locations</string>
+    <string name="aboutus_message2">Check Out Our Website!</string>
     <string name="donationsNotFound">No Donations Yet…\nGo Make a Donation!</string>
     <string name="donationError">Error : Couldn\'t Make a Donation…</string>
     <string name="donationDetails">Donation Details</string>
@@ -69,10 +69,10 @@
     <string name="button_addPetLocation">Add PetLocation</string>
     <string name="hint_petLocationTitle">Location Title</string>
     <string name="hint_petLocationDescription">Description </string>
-    <string name="menu_addPetLocation">Add Location</string>
+    <string name="menu_addPetLocation">Add PetLocation</string>
     <string name="menu_cancelPetLocation">Back</string>
     <string name="enter_petLocation_title"> Please enter a Location Title </string>
-    <string name="save_petLocation"> Save Location </string>
+    <string name="save_petLocation"> Save PetLocation </string>
     <string name="button_addImage"> Add Image </string>
     <string name="select_petLocation_image">Select Location image</string>
     <string name="button_changeImage">Change Image</string>
@@ -84,13 +84,13 @@
     <string name="enter_event_title"> Please enter a Event Title </string>
     <string name="save_event"> Save Event</string>
     <string name="select_event_image">Select event image</string>
-    <string name="button_location">Set Address</string>
+    <string name="button_location">Set Location</string>
     <string name="title_activity_map">MapActivity</string>
     <string name="hint_eventLatitude">Event Latitude</string>
     <string name="hint_eventLongitude">Event Longitude</string>
     <string name="splash_image">Splash Image</string>
     <string name="new_event">Add New Event</string>
-    <string name="menu_petLocation_delete">Location Delete</string>
+    <string name="menu_petLocation_delete">Delete Location</string>
     <string name="edit_petLocation_details">Edit Location Details</string>
     <string name="enter_petLocation_details">Enter Location Details</string>
     <string name="petLocation_title_label">Location Title</string>
@@ -104,27 +104,26 @@
     <string name="event_description_placeholder">Event Description</string>
     <string name="menu_viewEvents">View Events</string>
     <string name="petLocation_eventList">Events for Location:</string>
-    <string name="title_activity_event_list">EventListActivity</string>
+    <string name="title_activity_event_list">Event List</string>
     <string name="button_goToEvents">Go To Events</string>
     <string name="title_petLocationName">Location</string>
     <string name="selected_item">Selected item:</string>
     <string-array name="menu_petLocationCategorys">
-        <item>Outdoor Area</item>
-        <item>Dog Groomers</item>
         <item>Hotel</item>
         <item>Bar/Restaurant</item>
         <item>Pet Shop</item>
+        <item>Outdoor Area</item>
     </string-array>
-    <string name="petLocation_category_label">Location Type</string>
-    <string name="btn_filter">Filter Location Types</string>
-    <string name="event_budget_label">Event Cost</string>
+    <string name="petLocation_category_label">Location Category</string>
+    <string name="btn_filter">Filter Location Categorys</string>
+    <string name="event_cost_label">Event Cost</string>
     <string name="event_title_label">Event Title</string>
     <string name="event_description_label">Event Description</string>
     <string name="event_location_label">Event Location</string>
     <string name="event_images_label">Event Images</string>
     <string name="event_start_label">Event Start Date</string>
-    <string name="btn_budget_filter">Filter Event Cost</string>
-    <string name="petLocation_filter_label">Filter Location Types</string>
+    <string name="btn_cost_filter">Filter Event Costs</string>
+    <string name="petLocation_filter_label">Filter Location Categorys</string>
     <string name="new_event_label">New Event</string>
     <string name="petLocation_image_label">Location Image</string>
     <string name="event_save">Event Save</string>
@@ -134,7 +133,7 @@
     <string name="petLocationMessageLoading">Please wait while the Locations are loading...</string>
     <string name="nav_header_title">PupPlan</string>
     <string name="nav_header_subtitle">Promote Your Events!</string>
-    <string name="action_petLocation_list">Location List</string>
+    <string name="action_petLocation_list">Location List (Home)</string>
     <string name="eventsNotFound">No Events Entered For This Location Yet…\nEnter a New Event!</string>
     <string name="action_event_list">Event List</string>
     <string name="action_new_petLocation">New Location</string>
@@ -143,5 +142,16 @@
     <string name="group_map">Map of Events</string>
     <string name="action_map">Events</string>
     <string name="action_petLocation">New Location</string>
+    <string name="action_favourites">Favourites</string>
+    <string name="add_favourites">Add To Favourites</string>
+    <string name="remove_favourites">Remove From Favourites</string>
+    <string name="event_email_placeholder">Event Email</string>
+    <string name="my_events">My Events</string>
+    <string name="my_favourites">My Favourites</string>
+    <string name="theme_switch">Theme Switch</string>
+    <string name="light_mode">Light Mode</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="date_view">Start Date</string>
+    <string name="hint_eventCost">Free</string>
 
 </resources>

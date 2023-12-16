@@ -2,16 +2,15 @@ package ie.setu.pupplan.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import ie.setu.pupplan.databinding.CardPetlocationBinding
 import ie.setu.pupplan.models.PetLocationModel
+import ie.setu.pupplan.utils.customTransformation
 
 //interface will represent click events on a petLocation Card,
 // and allow us to abstract the response to this event
-interface PetLocationListener {
-    fun onPetLocationClick(petLocation: PetLocationModel)
-}
 
 // below class is designed to work with a RecyclerView to display a
 // list of PetLocationModel objects in a user interface.
@@ -22,12 +21,13 @@ interface PetLocationClickListener {
     fun onPetLocationClick(petLocation: PetLocationModel)
 }
 
-class PetLocationAdapter constructor(private var petLocations: ArrayList <PetLocationModel>,
+class PetLocationAdapter constructor(private var petLocations: ArrayList<PetLocationModel>,
                                    private val listener: PetLocationClickListener,
                                    private val readOnly: Boolean)
-    : RecyclerView.Adapter <PetLocationAdapter.MainHolder>() {
+    : RecyclerView.Adapter<PetLocationAdapter.MainHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainHolder {
+        // binding petLocation card
         val binding = CardPetlocationBinding
             .inflate(LayoutInflater.from(parent.context), parent, false)
 
@@ -35,6 +35,7 @@ class PetLocationAdapter constructor(private var petLocations: ArrayList <PetLoc
     }
 
     override fun onBindViewHolder(holder: MainHolder, position: Int) {
+        //specific petLocation is based on adapter position
         val petLocation = petLocations[holder.adapterPosition]
         holder.bind(petLocation,listener)
     }
@@ -48,20 +49,22 @@ class PetLocationAdapter constructor(private var petLocations: ArrayList <PetLoc
 
     inner class MainHolder(val binding : CardPetlocationBinding, private val readOnly: Boolean) :
         RecyclerView.ViewHolder(binding.root) {
-
+        //read only variable set for when all petLocations are loaded and you don't want user editing others
         val readOnlyRow = readOnly
-
+        //binding different elements within petLocation card
         fun bind(petLocation: PetLocationModel, listener: PetLocationClickListener) {
             binding.root.tag = petLocation
             binding.petLocation = petLocation
-            binding.petLocationTitle.text = petLocation.title
-//            binding.petLocationDescription.text = petLocation.description
-            binding.petLocationCategory.text = petLocation.category
-
-            Picasso.get().load(petLocation.image).resize(200,200).into(binding.imageIcon)
+            if (petLocation.image.isNotEmpty()) {
+                Picasso.get().load(petLocation.image).resize(200,200).into(binding.imageIcon)
+            }
+            Picasso.get().load(petLocation.profilePic.toUri())
+                .resize(200, 200)
+                .transform(customTransformation())
+                .centerCrop()
+                .into(binding.profilePic)
             binding.root.setOnClickListener { listener.onPetLocationClick(petLocation) }
+            binding.executePendingBindings()
         }
     }
-
-
 }

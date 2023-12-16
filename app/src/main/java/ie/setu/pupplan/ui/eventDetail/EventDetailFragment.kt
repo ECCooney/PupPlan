@@ -31,41 +31,36 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.squareup.picasso.Picasso
 import ie.setu.pupplan.R
-import ie.setu.pupplan.databinding.FragmentPetlocationDetailBinding
 import ie.setu.pupplan.databinding.FragmentEventDetailBinding
-import ie.setu.pupplan.databinding.FragmentEventNewBinding
 import ie.setu.pupplan.firebase.FirebaseImageManager
+import ie.setu.pupplan.models.Favourite
 import ie.setu.pupplan.models.Location
 import ie.setu.pupplan.models.NewEvent
-import ie.setu.pupplan.models.PetLocationManager
 import ie.setu.pupplan.models.PetLocationModel
 import ie.setu.pupplan.ui.auth.LoggedInViewModel
-import ie.setu.pupplan.ui.map.MapEvent
 import ie.setu.pupplan.ui.eventList.EventListViewModel
-import ie.setu.pupplan.ui.eventNew.EventNewFragmentArgs
-import ie.setu.pupplan.ui.eventNew.EventNewFragmentDirections
-import ie.setu.pupplan.ui.eventNew.EventNewViewModel
 import ie.setu.pupplan.utils.readImageUri
 import ie.setu.pupplan.utils.showImagePicker
 import timber.log.Timber
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 class EventDetailFragment : Fragment(), OnMapReadyCallback {
 
     private var _fragBinding: FragmentEventDetailBinding? = null
-    // This property is only valid between onCreateView and onDestroyView.
     private val fragBinding get() = _fragBinding!!
     private lateinit var eventViewModel: EventDetailViewModel
     private val args by navArgs<EventDetailFragmentArgs>()
     private val eventListViewModel: EventListViewModel by activityViewModels()
-    private val loggedInViewModel : LoggedInViewModel by activityViewModels()
-    private lateinit var imageIntentLauncher : ActivityResultLauncher<Intent>
-    private lateinit var image2IntentLauncher : ActivityResultLauncher<Intent>
-    private lateinit var image3IntentLauncher : ActivityResultLauncher<Intent>
-    private lateinit var mapIntentLauncher : ActivityResultLauncher<Intent>
-    var eventCost = "Show All" // Event budget initial selection
+    private val loggedInViewModel: LoggedInViewModel by activityViewModels()
+    private lateinit var imageIntentLauncher: ActivityResultLauncher<Intent>
+    private lateinit var image2IntentLauncher: ActivityResultLauncher<Intent>
+    private lateinit var image3IntentLauncher: ActivityResultLauncher<Intent>
+    private lateinit var mapIntentLauncher: ActivityResultLauncher<Intent>
+    var eventCost = "Free" // Event cost initial selection
     var image: String = ""
-    val eventCosts = arrayOf("Show All", "€0-€50K", "€50K-€100K", "€100K-€250K", "€250K-€500K", "€500K-€1M", "€1M+") // Creating array of different event budgets
+    val eventCosts = arrayOf("Show All", "Free", "€0-€10", "€10-€25", "€25-€50", "€50-€100", "€100+")
     val today = Calendar.getInstance()
     var dateDay = today.get(Calendar.DAY_OF_MONTH)
     var dateMonth = today.get(Calendar.MONTH)
@@ -76,14 +71,18 @@ class EventDetailFragment : Fragment(), OnMapReadyCallback {
     var eventImageUpdate: Boolean = false
     var eventImage2Update: Boolean = false
     var eventImage3Update: Boolean = false
+    var eventFavouritesList: MutableList<String>? = null
+    var eventFavouriteId: String? = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         _fragBinding = FragmentEventDetailBinding.inflate(inflater, container, false)
         val root = fragBinding.root
         setupMenu()
@@ -92,51 +91,30 @@ class EventDetailFragment : Fragment(), OnMapReadyCallback {
         eventViewModel = ViewModelProvider(this).get(EventDetailViewModel::class.java)
         //eventViewModel.observableEvent.observe(viewLifecycleOwner, Observer { render() })
 
-        eventViewModel.observablePetLocation.observe(viewLifecycleOwner, Observer {
-                PetLocation ->
-            PetLocation?.let {
-                currentPetLocation = PetLocation
-                getCurrentPetLocation(PetLocation)
-                render(PetLocation)
+        eventViewModel.observablePetLocation.observe(viewLifecycleOwner, Observer { petLocation ->
+            petLocation?.let {
+                currentPetLocation = petLocation
+                getCurrentPetLocation(petLocation)
+                render(petLocation)
             }
         })
 
-        var test = eventViewModel.getPetLocation(loggedInViewModel.liveFirebaseUser.value?.uid!!,
-            args.petLocationid)
+        eventViewModel.observableFavourite.observe(viewLifecycleOwner, Observer { favourite ->
+            favourite?.let {
+                println("this is my favourite")
+            }
+        })
+
+        var test = eventViewModel.getPetLocation(
+            loggedInViewModel.liveFirebaseUser.value?.uid!!,
+            args.petLocationid
+        )
         println("this is test $test")
+        println("this is args.petLocationid ${args.petLocationid}")
 
         var location = args.location
         println("this is passed location $location")
 
-        //event = eventViewModel.getEvent(loggedInViewModel.liveFirebaseUser.value?.email!!, args.PetLocationid, args.eventid)!!
-
-        /*fragBinding.eventTitle.setText(event.eventTitle)
-        fragBinding.eventDescription.setText(event.eventDescription)
-        eventCost = event.eventCost
-        image = event.eventImage
-        var formattedLatitude = String.format("%.2f", event.lat); // Limit the decimal places to two
-        fragBinding.eventLatitude.setText("Latitude: $formattedLatitude")
-        var formattedLongitude = String.format("%.2f", event.lng); // Limit the decimal places to two
-        fragBinding.eventLongitude.setText("Longitude: $formattedLongitude")
-
-
-        val spinner = fragBinding.eventCostSpinner
-        spinner.adapter = activity?.applicationContext?.let { ArrayAdapter(it, android.R.layout.simple_spinner_item, eventCosts) } as SpinnerAdapter
-        val spinnerPosition = eventCosts.indexOf(eventCost)
-        spinner.setSelection(spinnerPosition)
-
-        spinner.onItemSelectedListener = object :
-            AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>,
-                                        view: View?, position: Int, id: Long) {
-                eventCost = eventCosts[position] // Index of array and spinner position used to select event budget
-
-                println("this is eventCost: $eventCost")
-            }
-            // No problem if nothing selected
-            override fun onNothingSelected(parent: AdapterView<*>) {
-            }
-        }*/
 
         fragBinding.eventLocation.setOnClickListener {
             Timber.i("Set Location Pressed")
@@ -144,54 +122,41 @@ class EventDetailFragment : Fragment(), OnMapReadyCallback {
 
         // Set the initial values for location if a new location is set, passing details of location and event to the map activity
         fragBinding.eventLocation.setOnClickListener {
-            /*val location = Location(event.lat, event.lng, event.zoom)
 
-            val launcherIntent = Intent(activity, MapEvent::class.java)
-                .putExtra("location", location)
-            //.putExtra("event_edit", event)
-            mapIntentLauncher.launch(launcherIntent)*/
             val location = Location(args.location.lat, args.location.lng, 15f)
-            var tempEvent = NewEvent(eventId = args.event.eventId, eventTitle = fragBinding.eventTitle.text.toString(), eventDescription = fragBinding.eventDescription.text.toString(),
-                eventCost = eventCost, eventImage = event.eventImage, eventImage2 = event.eventImage2, eventImage3 = event.eventImage3,
-                eventPetLocationName = currentPetLocation!!.title, petLocationId = args.petLocationid, lat = args.location.lat, lng = args.location.lng, zoom = args.location.zoom,
-                eventStartDay = dateDay, eventStartMonth = dateMonth, eventStartYear = dateYear)
+            var tempEvent = NewEvent(
+                eventId = args.event.eventId,
+                eventTitle = fragBinding.eventTitle.text.toString(),
+                eventDescription = fragBinding.eventDescription.text.toString(),
+                eventCost = eventCost,
+                eventImage = event.eventImage,
+                eventImage2 = event.eventImage2,
+                eventImage3 = event.eventImage3,
+                eventPetLocationName = currentPetLocation!!.title,
+                petLocationId = args.petLocationid,
+                lat = args.location.lat,
+                lng = args.location.lng,
+                zoom = args.location.zoom,
+                eventStartDay = dateDay,
+                eventStartMonth = dateMonth,
+                eventStartYear = dateYear,
+                eventUserId = args.event.eventUserId,
+                eventUserEmail = args.event.eventUserEmail,
+                eventPetLocationCategory = currentPetLocation.category
+            )
 
-            /*val launcherIntent = Intent(activity, MapEvent::class.java)
-                .putExtra("location", location)
-                //.putExtra("event_edit", event)
-            mapIntentLauncher.launch(launcherIntent)*/
-            val action = EventDetailFragmentDirections.actionEventDetailFragmentToEventMapFragment(location, args.petLocationid,tempEvent)
+
+            val action =
+                EventDetailFragmentDirections.actionEventDetailFragmentToEventMapFragment(
+                    location,
+                    args.petLocationid,
+                    tempEvent
+                )
             findNavController().navigate(action)
         }
 
-        /*
-
-        // Set up DatePicker
-        val datePicker = fragBinding.eventStartDatePicker
-        // Set initial values if a start date already exists
-        dateDay = event.eventStartDay
-        dateMonth = event.eventStartMonth - 1
-        dateYear = event.eventStartYear
-        datePicker.init(dateYear, dateMonth, dateDay) { view, year, month, day ->
-            val month = month + 1
-            val msg = "You Selected: $day/$month/$year"
-            var dateEventStart = "$day/$month/$year"
-            dateDay = day
-            dateMonth = month
-            dateYear = year
-            // Toast is turned off, but can be turned back on
-            //Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
-            println ("this is dateDay: $dateDay")
-            println ("this is dateMonth: $dateMonth")
-            println ("this is dateYear: $dateYear")
-            println("this is datePicker: $datePicker")
-            println("this is dateEventStart: $dateEventStart")
-        }
-
-         */
-
-        setUpdateButtonListener(fragBinding)
-        setDeleteButtonListener(fragBinding)
+        setAddFavouriteButtonListener(fragBinding)
+        setRemoveFavouriteButtonListener(fragBinding)
 
         fragBinding.chooseImage.setOnClickListener {
             showImagePicker(imageIntentLauncher)
@@ -209,44 +174,11 @@ class EventDetailFragment : Fragment(), OnMapReadyCallback {
             showImagePicker(image3IntentLauncher)
         }
 
-        /*
-
-        Picasso.get()
-            .load(event.eventImage)
-            .centerCrop()
-            .resize(450, 420)
-            .into(fragBinding.eventImage)
-        if (event.eventImage != "") {
-            fragBinding.chooseImage.setText(R.string.button_changeImage)
-        }
-        Picasso.get()
-            .load(event.eventImage2)
-            .centerCrop()
-            .resize(450, 420)
-            .into(fragBinding.eventImage2)
-        if (event.eventImage2 != "") {
-            fragBinding.chooseImage2.isVisible = true
-            fragBinding.eventImage2.isVisible = true
-            fragBinding.chooseImage2.setText(R.string.button_changeImage)
-        }
-        Picasso.get()
-            .load(event.eventImage3)
-            .centerCrop()
-            .resize(450, 420)
-            .into(fragBinding.eventImage3)
-        if (event.eventImage3 != "") {
-            fragBinding.chooseImage3.isVisible = true
-            fragBinding.eventImage3.isVisible = true
-            fragBinding.chooseImage3.setText(R.string.button_changeImage)
-        }
-
-         */
-
         return root;
     }
 
-    private fun getCurrentPetLocation(PetLocation: PetLocationModel) {
-        currentPetLocation = PetLocation
+    private fun getCurrentPetLocation(petLocation: PetLocationModel) {
+        currentPetLocation = petLocation
         println("this is newCurrentPetLocation3 $currentPetLocation")
     }
 
@@ -270,40 +202,77 @@ class EventDetailFragment : Fragment(), OnMapReadyCallback {
         event.zoom = 15f
         eventViewModel.map.clear()
         eventViewModel.map.uiSettings?.setZoomControlsEnabled(true)
-        val options = MarkerOptions().title(event.eventTitle).position(LatLng(event.lat, event.lng))
+        val options =
+            MarkerOptions().title(event.eventTitle).position(LatLng(event.lat, event.lng))
         eventViewModel.map.addMarker(options)
-        eventViewModel.map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(event.lat, event.lng), event.zoom))
-        //showEvent(event)
+        eventViewModel.map.moveCamera(
+            CameraUpdateFactory.newLatLngZoom(
+                LatLng(
+                    event.lat,
+                    event.lng
+                ), event.zoom
+            )
+        )
     }
 
-    private fun render(PetLocation: PetLocationModel) {
-        //event = PetLocation.events?.find { p -> p.eventId == args.event.eventId }!!
+    private fun render(petLocation: PetLocationModel) {
         event = args.event
+        fragBinding.eventName.setText(event.eventTitle)
         println("this is the currentEvent $event")
 
         fragBinding.eventTitle.setText(event.eventTitle)
         fragBinding.eventDescription.setText(event.eventDescription)
+        fragBinding.eventTitleLocked.setText(event.eventTitle)
+        fragBinding.eventDescriptionLocked.setText(event.eventDescription)
+        fragBinding.eventCostLocked.setText(event.eventCost)
+        val dateComplete = LocalDate.of(
+            event.eventStartYear,
+            event.eventStartMonth + 1,
+            event.eventStartDay
+        )
+        var formatter = DateTimeFormatter.ofPattern("dd-MMMM-yyyy")
+        fragBinding.dateView.setText(dateComplete.format(formatter))
         eventCost = event.eventCost
+        eventFavouritesList = event.eventFavourites
+        eventFavouriteId =
+            eventFavouritesList?.find { p -> p == loggedInViewModel.liveFirebaseUser.value?.uid!! }
+        if (eventFavouriteId == null) {
+            fragBinding.favouriteAddButton.visibility = View.VISIBLE
+            fragBinding.favouriteRemoveButton.visibility = View.GONE
+        } else {
+            fragBinding.favouriteAddButton.visibility = View.GONE
+            fragBinding.favouriteRemoveButton.visibility = View.VISIBLE
+        }
         image = event.eventImage
-        var formattedLatitude = String.format("%.2f", args.location.lat); // Limit the decimal places to two
+        var formattedLatitude =
+            String.format("%.2f", args.location.lat); // Limit the decimal places to two
         fragBinding.eventLatitude.setText("Latitude: $formattedLatitude")
-        var formattedLongitude = String.format("%.2f", args.location.lng); // Limit the decimal places to two
+        var formattedLongitude =
+            String.format("%.2f", args.location.lng); // Limit the decimal places to two
         fragBinding.eventLongitude.setText("Longitude: $formattedLongitude")
 
-
         val spinner = fragBinding.eventCostSpinner
-        spinner.adapter = activity?.applicationContext?.let { ArrayAdapter(it, android.R.layout.simple_spinner_item, eventCosts) } as SpinnerAdapter
+        spinner.adapter = activity?.applicationContext?.let {
+            ArrayAdapter(
+                it,
+                android.R.layout.simple_spinner_item,
+                eventCosts
+            )
+        } as SpinnerAdapter
         val spinnerPosition = eventCosts.indexOf(eventCost)
         spinner.setSelection(spinnerPosition)
-
         spinner.onItemSelectedListener = object :
             AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>,
-                                        view: View?, position: Int, id: Long) {
-                eventCost = eventCosts[position] // Index of array and spinner position used to select event budget
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View?, position: Int, id: Long
+            ) {
+                eventCost =
+                    eventCosts[position] // Index of array and spinner position used to select event cost
 
                 println("this is eventCost: $eventCost")
             }
+
             // No problem if nothing selected
             override fun onNothingSelected(parent: AdapterView<*>) {
             }
@@ -324,9 +293,9 @@ class EventDetailFragment : Fragment(), OnMapReadyCallback {
             dateYear = year
             // Toast is turned off, but can be turned back on
             //Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
-            println ("this is dateDay: $dateDay")
-            println ("this is dateMonth: $dateMonth")
-            println ("this is dateYear: $dateYear")
+            println("this is dateDay: $dateDay")
+            println("this is dateMonth: $dateMonth")
+            println("this is dateYear: $dateYear")
             println("this is datePicker: $datePicker")
             println("this is dateEventStart: $dateEventStart")
         }
@@ -336,7 +305,8 @@ class EventDetailFragment : Fragment(), OnMapReadyCallback {
                 .load(event.eventImage)
                 .centerCrop()
                 .resize(450, 420)
-                .into(fragBinding.eventImage) }
+                .into(fragBinding.eventImage)
+        }
         if (event.eventImage != "") {
             fragBinding.chooseImage.setText(R.string.button_changeImage)
         }
@@ -346,7 +316,8 @@ class EventDetailFragment : Fragment(), OnMapReadyCallback {
                 .load(event.eventImage2)
                 .centerCrop()
                 .resize(450, 420)
-                .into(fragBinding.eventImage2)}
+                .into(fragBinding.eventImage2)
+        }
 
         if (event.eventImage2 != "") {
             fragBinding.chooseImage2.isVisible = true
@@ -358,172 +329,334 @@ class EventDetailFragment : Fragment(), OnMapReadyCallback {
                 .load(event.eventImage3)
                 .centerCrop()
                 .resize(450, 420)
-                .into(fragBinding.eventImage3)}
+                .into(fragBinding.eventImage3)
+        }
 
         if (event.eventImage3 != "") {
             fragBinding.chooseImage3.isVisible = true
             fragBinding.eventImage3.isVisible = true
             fragBinding.chooseImage3.setText(R.string.button_changeImage)
         }
-        //fragBinding.PetLocationTitle.setText("This is Title")
-        //fragBinding.editUpvotes.setText("0")
-        //fragBinding.PetLocationvm = detailViewModel
-        //Timber.i("Retrofit fragBinding.donationvm == $fragBinding.donationvm")
+
+        //setting visibilities depending on whether a event belongs to a user or someone else
+        if (args.event.eventUserId != loggedInViewModel.liveFirebaseUser.value!!.uid) {
+            fragBinding.eventTitle.isVisible = false
+            fragBinding.eventDescription.isVisible = false
+            fragBinding.eventTitleLocked.isVisible = true
+            fragBinding.eventDescriptionLocked.isVisible = true
+            fragBinding.eventLocation.isVisible = false
+            fragBinding.chooseImage.isVisible = false
+            fragBinding.chooseImage2.isVisible = false
+            fragBinding.chooseImage3.isVisible = false
+            fragBinding.dateView.isVisible = true
+            fragBinding.eventStartDatePicker.isVisible = false
+            fragBinding.eventCostLocked.isVisible = true
+            fragBinding.eventCostSpinner.isVisible = false
+        } else {
+            fragBinding.eventTitleLocked.isVisible = false
+            fragBinding.eventDescriptionLocked.isVisible = false
+            fragBinding.dateView.isVisible = false
+            fragBinding.eventCostLocked.isVisible = false
+        }
     }
 
-    fun setUpdateButtonListener(layout: FragmentEventDetailBinding) {
-        layout.editEventButton.setOnClickListener {
-            if (layout.eventTitle.text.isEmpty()) {
-                Toast.makeText(context,R.string.enter_event_title, Toast.LENGTH_LONG).show()
+    fun setAddFavouriteButtonListener(layout: FragmentEventDetailBinding) {
+        layout.favouriteAddButton.setOnClickListener {
+            if (eventFavouritesList != null) { // If the event has favourites
+                eventFavouritesList!!.add(loggedInViewModel.liveFirebaseUser.value?.uid!!)
             } else {
-                if (eventImageUpdate) {
-                    event.eventImage = FirebaseImageManager.imageUriEvent.value.toString()
-                }
-                if (eventImage2Update) {
-                    event.eventImage2 = FirebaseImageManager.imageUriEvent2.value.toString()
-                }
-                if (eventImage3Update) {
-                    event.eventImage3 = FirebaseImageManager.imageUriEvent3.value.toString()
-                }
-                var updatedEvent = NewEvent(eventId = args.event.eventId, eventTitle = layout.eventTitle.text.toString(), eventDescription = layout.eventDescription.text.toString(),
-                    eventCost = eventCost, eventImage = event.eventImage, eventImage2 = event.eventImage2, eventImage3 = event.eventImage3,
-                    eventPetLocationName = currentPetLocation!!.title, petLocationId = args.petLocationid, lat = args.location.lat, lng = args.location.lng,
-                    eventStartDay = dateDay, eventStartMonth = dateMonth, eventStartYear = dateYear)
+                eventFavouritesList =
+                    mutableListOf(loggedInViewModel.liveFirebaseUser.value?.uid!!)
+            }
+            if (eventImageUpdate) {
+                event.eventImage = FirebaseImageManager.imageUriEvent.value.toString()
+            }
+            if (eventImage2Update) {
+                event.eventImage2 = FirebaseImageManager.imageUriEvent2.value.toString()
+            }
+            if (eventImage3Update) {
+                event.eventImage3 = FirebaseImageManager.imageUriEvent3.value.toString()
+            }
+            var updatedEvent = NewEvent(
+                eventId = args.event.eventId,
+                eventTitle = fragBinding.eventTitle.text.toString(),
+                eventDescription = fragBinding.eventDescription.text.toString(),
+                eventCost = eventCost,
+                eventImage = event.eventImage,
+                eventImage2 = event.eventImage2,
+                eventImage3 = event.eventImage3,
+                eventPetLocationName = args.event.eventPetLocationName,
+                petLocationId = args.petLocationid,
+                lat = args.location.lat,
+                lng = args.location.lng,
+                eventStartDay = dateDay,
+                eventStartMonth = dateMonth,
+                eventStartYear = dateYear,
+                eventFavourites = eventFavouritesList,
+                eventUserId = args.event.eventUserId,
+                eventUserEmail = args.event.eventUserEmail,
+                eventPetLocationCategory = currentPetLocation.category
+            )
+            //making sure any updating of events only happens if it is from correct user and related to correct petLocation
+            if (args.event.eventUserId == loggedInViewModel.liveFirebaseUser.value!!.uid && args.event.petLocationId == args.petLocationid) {
+                if (fragBinding.eventTitle.text.isEmpty()) {
+                    Toast.makeText(context, R.string.enter_event_title, Toast.LENGTH_LONG).show()
+                } else {
+                    if (currentPetLocation.events != null) { // If the petLocation has events (as expected)
+                        var eventIdList =
+                            arrayListOf<String>() // Create a arrayList variable for storing event IDs
+                        currentPetLocation.events!!.forEach { // For each event in the relevant petLocation, add the event ID to the list of event IDs
+                            eventIdList += it.eventId
+                        }
+                        println("this is eventIdList: $eventIdList")
+                        var eventId = updatedEvent.eventId
+                        println("this is eventId: $eventId")
+                        val index =
+                            eventIdList.indexOf(updatedEvent.eventId) // Find the index position of the event ID that matches the ID of the event that was passed
+                        println("this is index: $index")
+                        var petLocationEvents1 =
+                            currentPetLocation.events!! // Create a list of the events from the passed petLocation
+                        var short =
+                            petLocationEvents1.removeAt(index) // Remove the event at the previously found index position within the created event list
+                        println("this is short: $short")
+                        petLocationEvents1 =
+                            petLocationEvents1.plus(updatedEvent) as MutableList<NewEvent> // Add the passed event to the shortened list of events
+                        currentPetLocation.events =
+                            ArrayList(petLocationEvents1) // Assign the new list of events to the found petLocation
 
-                if (currentPetLocation.events != null) { // If the PetLocation has events (as expected)
-                    var eventIdList =
-                        arrayListOf<String>() // Create a arrayList variable for storing event IDs
-                    currentPetLocation.events!!.forEach { // For each event in the relevant PetLocation, add the event ID to the list of event IDs
-                        eventIdList += it.eventId
+                        println("this is updated petLocation events ${currentPetLocation.events}")
                     }
-                    println("this is eventIdList: $eventIdList")
-                    var eventId = updatedEvent.eventId
-                    println("this is eventId: $eventId")
-                    val index =
-                        eventIdList.indexOf(updatedEvent.eventId) // Find the index position of the event ID that matches the ID of the event that was passed
-                    println("this is index: $index")
-                    var PetLocationEvents1 =
-                        currentPetLocation.events!! // Create a list of the events from the passed PetLocation
-                    var short =
-                        PetLocationEvents1.removeAt(index) // Remove the event at the previously found index position within the created event list
-                    println("this is short: $short")
-                    PetLocationEvents1 =
-                        PetLocationEvents1.plus(updatedEvent) as MutableList<NewEvent> // Add the passed event to the shortened list of events
-                    currentPetLocation.events =
-                        ArrayList(PetLocationEvents1) // Assign the new list of events to the found PetLocation
-
-                    println("this is updated PetLocation events ${currentPetLocation.events}")
+                    eventViewModel.updatePetLocation(
+                        loggedInViewModel.liveFirebaseUser.value?.uid!!,
+                        args.petLocationid,
+                        currentPetLocation
+                    )
+                    eventViewModel.addFavourite(
+                        loggedInViewModel.liveFirebaseUser,
+                        Favourite(eventFavourite = updatedEvent)
+                    )
+                    val action =
+                        EventDetailFragmentDirections.actionEventDetailFragmentToEventListFragment(
+                            args.petLocationid
+                        )
+                    findNavController().navigate(action)
                 }
-
-
-                eventViewModel.updatePetLocation(loggedInViewModel.liveFirebaseUser.value?.uid!!, args.petLocationid, currentPetLocation)
+            } else {
+                eventViewModel.addFavourite(
+                    loggedInViewModel.liveFirebaseUser,
+                    Favourite(eventFavourite = updatedEvent)
+                )
             }
-            val action = EventDetailFragmentDirections.actionEventDetailFragmentToEventListFragment(args.petLocationid)
-            findNavController().navigate(action)
+
+            fragBinding.favouriteAddButton.visibility = View.GONE
+            fragBinding.favouriteRemoveButton.visibility = View.VISIBLE
         }
     }
 
-
-
-    fun setDeleteButtonListener(layout: FragmentEventDetailBinding) {
-        fragBinding.deleteEventButton.setOnClickListener {
-
-            if (currentPetLocation.events != null) { // If the PetLocation has events (as expected)
-                var eventIdList =
+    fun setRemoveFavouriteButtonListener(layout: FragmentEventDetailBinding) {
+        fragBinding.favouriteRemoveButton.setOnClickListener {
+            if (eventFavouritesList != null) { // If the event has favourites
+                var favouriteIdList =
                     arrayListOf<String>() // Create a arrayList variable for storing event IDs
-                currentPetLocation.events!!.forEach { // For each event in the relevant PetLocation, add the event ID to the list of event IDs
-                    eventIdList += it.eventId
+                eventFavouritesList!!.forEach { // For each event in the relevant petLocation, add the event ID to the list of event IDs
+                    favouriteIdList += it
                 }
-                println("this is eventIdList: $eventIdList")
-                var eventId = args.event.eventId
-                println("this is eventId: $eventId")
+                println("this is favouriteIdList: $favouriteIdList")
                 val index =
-                    eventIdList.indexOf(args.event.eventId) // Find the index position of the event ID that matches the ID of the event that was passed
+                    favouriteIdList.indexOf(loggedInViewModel.liveFirebaseUser.value?.uid!!) // Find the index position of the favourite event ID that matches the ID of the event that was passed
                 println("this is index: $index")
-                var PetLocationEvents1 =
-                    currentPetLocation.events!! // Create a list of the events from the passed PetLocation
+                var favouriteEvents1 =
+                    eventFavouritesList!! // Create a list of the events from the passed petLocation
                 var short =
-                    PetLocationEvents1.removeAt(index) // Remove the event at the previously found index position within the created event list
+                    favouriteEvents1.removeAt(index) // Remove the event at the previously found index position within the created event list
                 println("this is short: $short")
+                // Add the passed event to the shortened list of events
+                eventFavouritesList =
+                    favouriteEvents1 // Assign the new list of events to the found petLocation
 
-                currentPetLocation.events =
-                    ArrayList(PetLocationEvents1) // Assign the new list of events to the found PetLocation
-
-                println("this is updated PetLocation events ${currentPetLocation.events}")
+                println("this is updated event favourites ${eventFavouritesList}")
             }
+            if (eventImageUpdate) {
+                event.eventImage = FirebaseImageManager.imageUriEvent.value.toString()
+            }
+            if (eventImage2Update) {
+                event.eventImage2 = FirebaseImageManager.imageUriEvent2.value.toString()
+            }
+            if (eventImage3Update) {
+                event.eventImage3 = FirebaseImageManager.imageUriEvent3.value.toString()
+            }
+            println("this is updated event favourites again ${eventFavouritesList}")
+            val updatedEvent = NewEvent(
+                eventId = args.event.eventId,
+                eventTitle = fragBinding.eventTitle.text.toString(),
+                eventDescription = fragBinding.eventDescription.text.toString(),
+                eventCost = eventCost,
+                eventImage = event.eventImage,
+                eventImage2 = event.eventImage2,
+                eventImage3 = event.eventImage3,
+                eventPetLocationName = args.event.eventPetLocationName,
+                petLocationId = args.petLocationid,
+                lat = args.location.lat,
+                lng = args.location.lng,
+                eventStartDay = dateDay,
+                eventStartMonth = dateMonth,
+                eventStartYear = dateYear,
+                eventFavourites = eventFavouritesList,
+                eventUserId = args.event.eventUserId,
+                eventUserEmail = args.event.eventUserEmail,
+                eventPetLocationCategory = currentPetLocation.category
+            )
+            //making sure any updating of events only happens if it is from correct user and related to correct petLocation
+            if (args.event.eventUserId == loggedInViewModel.liveFirebaseUser.value!!.uid && args.event.petLocationId == args.petLocationid) {
+                if (fragBinding.eventTitle.text.isEmpty()) {
+                    Toast.makeText(context, R.string.enter_event_title, Toast.LENGTH_LONG).show()
+                } else {
+                    if (currentPetLocation.events != null) { // If the petLocation has events (as expected)
+                        var eventIdList =
+                            arrayListOf<String>() // Create a arrayList variable for storing event IDs
+                        currentPetLocation.events!!.forEach { // For each event in the relevant petLocation, add the event ID to the list of event IDs
+                            eventIdList += it.eventId
+                        }
+                        println("this is eventIdList: $eventIdList")
+                        var eventId = updatedEvent.eventId
+                        println("this is eventId: $eventId")
+                        val index =
+                            eventIdList.indexOf(updatedEvent.eventId) // Find the index position of the event ID that matches the ID of the event that was passed
+                        println("this is index: $index")
+                        var petLocationEvents1 =
+                            currentPetLocation.events!! // Create a list of the events from the passed petLocation
+                        var short =
+                            petLocationEvents1.removeAt(index) // Remove the event at the previously found index position within the created event list
+                        println("this is short: $short")
+                        petLocationEvents1 =
+                            petLocationEvents1.plus(updatedEvent) as MutableList<NewEvent> // Add the passed event to the shortened list of events
+                        currentPetLocation.events =
+                            ArrayList(petLocationEvents1) // Assign the new list of events to the found petLocation
 
-            eventViewModel.updatePetLocation(loggedInViewModel.liveFirebaseUser.value?.uid!!, args.petLocationid, currentPetLocation)
-
-            val action = EventDetailFragmentDirections.actionEventDetailFragmentToEventListFragment(args.petLocationid)
-            findNavController().navigate(action)
+                        println("this is updated petLocation events ${currentPetLocation.events}")
+                    }
+                    eventViewModel.updatePetLocation(
+                        loggedInViewModel.liveFirebaseUser.value?.uid!!,
+                        args.petLocationid,
+                        currentPetLocation
+                    )
+                    eventViewModel.removeFavourite(
+                        loggedInViewModel.liveFirebaseUser.value?.uid!!,
+                        args.event.eventId
+                    )
+                    val action =
+                        EventDetailFragmentDirections.actionEventDetailFragmentToEventListFragment(
+                            args.petLocationid
+                        )
+                    findNavController().navigate(action)
+                }
+            } else {
+                eventViewModel.removeFavourite(
+                    loggedInViewModel.liveFirebaseUser.value?.uid!!,
+                    args.event.eventId
+                )
+            }
+            fragBinding.favouriteAddButton.visibility = View.VISIBLE
+            fragBinding.favouriteRemoveButton.visibility = View.GONE
         }
     }
-
-
 
     // Image picker is setup for choosing event image
     private fun registerImagePickerCallback() {
         imageIntentLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult())
             { result ->
-                when(result.resultCode){
+                when (result.resultCode) {
                     AppCompatActivity.RESULT_OK -> {
                         if (result.data != null) {
-                            Timber.i("Got Result ${readImageUri(result.resultCode, result.data).toString()}")
+                            Timber.i(
+                                "Got Result ${
+                                    readImageUri(
+                                        result.resultCode,
+                                        result.data
+                                    ).toString()
+                                }"
+                            )
                             image = result.data!!.data!!.toString()
                             fragBinding.chooseImage.setText(R.string.button_changeImage)
                             FirebaseImageManager
-                                .updateEventImage(loggedInViewModel.liveFirebaseUser.value!!.uid,
+                                .updateEventImage(
+                                    loggedInViewModel.liveFirebaseUser.value!!.uid,
                                     readImageUri(result.resultCode, result.data),
                                     fragBinding.eventImage,
-                                    false, "eventImage")
+                                    false, "eventImage"
+                                )
                             event.eventImage = result.data!!.data!!.toString()
                             println("this is event.eventImage ${event.eventImage}")
                             eventImageUpdate = true
                         } // end of if
                     }
-                    AppCompatActivity.RESULT_CANCELED -> { } else -> { }
+
+                    AppCompatActivity.RESULT_CANCELED -> {}
+                    else -> {}
                 }
             }
         image2IntentLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult())
             { result ->
-                when(result.resultCode){
+                when (result.resultCode) {
                     AppCompatActivity.RESULT_OK -> {
                         if (result.data != null) {
-                            Timber.i("Got Result ${readImageUri(result.resultCode, result.data).toString()}")
+                            Timber.i(
+                                "Got Result ${
+                                    readImageUri(
+                                        result.resultCode,
+                                        result.data
+                                    ).toString()
+                                }"
+                            )
                             fragBinding.chooseImage.setText(R.string.button_changeImage)
                             FirebaseImageManager
-                                .updateEventImage(loggedInViewModel.liveFirebaseUser.value!!.uid,
+                                .updateEventImage(
+                                    loggedInViewModel.liveFirebaseUser.value!!.uid,
                                     readImageUri(result.resultCode, result.data),
                                     fragBinding.eventImage2,
-                                    false, "eventImage2")
+                                    false, "eventImage2"
+                                )
                             event.eventImage2 = result.data!!.data!!.toString()
                             eventImage2Update = true
                         } // end of if
                     }
-                    AppCompatActivity.RESULT_CANCELED -> { } else -> { }
+
+                    AppCompatActivity.RESULT_CANCELED -> {}
+                    else -> {}
                 }
             }
         // Image launcher for 3rd event image
         image3IntentLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult())
             { result ->
-                when(result.resultCode){
+                when (result.resultCode) {
                     AppCompatActivity.RESULT_OK -> {
                         if (result.data != null) {
-                            Timber.i("Got Result ${readImageUri(result.resultCode, result.data).toString()}")
+                            Timber.i(
+                                "Got Result ${
+                                    readImageUri(
+                                        result.resultCode,
+                                        result.data
+                                    ).toString()
+                                }"
+                            )
                             fragBinding.chooseImage.setText(R.string.button_changeImage)
                             FirebaseImageManager
-                                .updateEventImage(loggedInViewModel.liveFirebaseUser.value!!.uid,
+                                .updateEventImage(
+                                    loggedInViewModel.liveFirebaseUser.value!!.uid,
                                     readImageUri(result.resultCode, result.data),
                                     fragBinding.eventImage3,
-                                    false, "eventImage3")
+                                    false, "eventImage3"
+                                )
                             event.eventImage3 = result.data!!.data!!.toString()
                             eventImage3Update = true
                         } // end of if
                     }
-                    AppCompatActivity.RESULT_CANCELED -> { } else -> { }
+
+                    AppCompatActivity.RESULT_CANCELED -> {}
+                    else -> {}
                 }
             }
     }
@@ -537,20 +670,29 @@ class EventDetailFragment : Fragment(), OnMapReadyCallback {
                     AppCompatActivity.RESULT_OK -> {
                         if (result.data != null) {
                             Timber.i("Got Location ${result.data.toString()}")
-                            val location = result.data!!.extras?.getParcelable<Location>("location")!!
+                            val location =
+                                result.data!!.extras?.getParcelable<Location>("location")!!
                             Timber.i("Location == $location")
                             // Setting event co-ordinates based on location passed from map
                             event.lat = location.lat
                             event.lng = location.lng
                             event.zoom = location.zoom
                             // Set shown co-ordinates based on location passed from map
-                            var formattedLatitude = String.format("%.2f", location.lat); // Limit the decimal places to two
+                            var formattedLatitude = String.format(
+                                "%.2f",
+                                location.lat
+                            ); // Limit the decimal places to two
                             fragBinding.eventLatitude.setText("Latitude: $formattedLatitude")
-                            var formattedLongitude = String.format("%.2f", location.lng); // Limit the decimal places to two
+                            var formattedLongitude = String.format(
+                                "%.2f",
+                                location.lng
+                            ); // Limit the decimal places to two
                             fragBinding.eventLongitude.setText("Longitude: $formattedLongitude")
                         } // end of if
                     }
-                    AppCompatActivity.RESULT_CANCELED -> { } else -> { }
+
+                    AppCompatActivity.RESULT_CANCELED -> {}
+                    else -> {}
                 }
             }
     }
@@ -559,10 +701,19 @@ class EventDetailFragment : Fragment(), OnMapReadyCallback {
         (requireActivity() as MenuHost).addMenuProvider(object : MenuProvider {
             override fun onPrepareMenu(menu: Menu) {
                 // Handle for example visibility of menu items
+                (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(
+                    false
+                )
             }
 
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.menu_event_detail, menu)
+                //preventing users saving if event doesn't belong to them or if it's related to the wrong petLocation.
+                if (args.event.eventUserId != loggedInViewModel.liveFirebaseUser.value!!.uid || args.petLocationid != args.event.petLocationId) {
+                    menu.getItem(1).isVisible = false
+                    menu.getItem(2).isVisible = false
+                    menu.getItem(3).isVisible = false
+                }
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
@@ -571,34 +722,141 @@ class EventDetailFragment : Fragment(), OnMapReadyCallback {
                     R.id.item_home -> {
                         findNavController().navigate(R.id.action_eventDetailFragment_to_petLocationListFragment)
                     }
+
                     R.id.item_cancel -> {
-                        val action = EventDetailFragmentDirections.actionEventDetailFragmentToEventListFragment(args.petLocationid)
+                        val action =
+                            EventDetailFragmentDirections.actionEventDetailFragmentToEventListFragment(
+                                args.petLocationid
+                            )
                         findNavController().navigate(action)
                     }
-                    /*R.id.item_event_save -> {
+
+                    R.id.item_event_save -> {
                         if (fragBinding.eventTitle.text.isEmpty()) {
-                            Toast.makeText(context,R.string.enter_event_title, Toast.LENGTH_LONG).show()
+                            Toast.makeText(context, R.string.enter_event_title, Toast.LENGTH_LONG)
+                                .show()
                         } else {
-                            val PetLocation = eventViewModel.getPetLocation(loggedInViewModel.liveFirebaseUser.value?.email!!,
-                                args.PetLocationid)
-                            eventViewModel.updateEvent(loggedInViewModel.liveFirebaseUser.value?.email!!,
-                                NewEvent(eventId = args.eventid, eventTitle = fragBinding.eventTitle.text.toString(), eventDescription = fragBinding.eventDescription.text.toString(),
-                                    eventCost = eventCost, eventImage = image, eventImage2 = event.eventImage2, eventImage3 = event.eventImage3,
-                                    eventPetLocationName = PetLocation!!.title, PetLocationId = args.PetLocationid, lat = event.lat, lng = event.lng,
-                                    eventStartDay = dateDay, eventStartMonth = dateMonth, eventStartYear = dateYear),
-                                args.PetLocationid)
+                            if (eventImageUpdate) {
+                                event.eventImage =
+                                    FirebaseImageManager.imageUriEvent.value.toString()
+                            }
+                            if (eventImage2Update) {
+                                event.eventImage2 =
+                                    FirebaseImageManager.imageUriEvent2.value.toString()
+                            }
+                            if (eventImage3Update) {
+                                event.eventImage3 =
+                                    FirebaseImageManager.imageUriEvent3.value.toString()
+                            }
+                            var updatedEvent = NewEvent(
+                                eventId = args.event.eventId,
+                                eventTitle = fragBinding.eventTitle.text.toString(),
+                                eventDescription = fragBinding.eventDescription.text.toString(),
+                                eventCost = eventCost,
+                                eventImage = event.eventImage,
+                                eventImage2 = event.eventImage2,
+                                eventImage3 = event.eventImage3,
+                                eventPetLocationName = args.event.eventPetLocationName,
+                                petLocationId = args.petLocationid,
+                                lat = args.location.lat,
+                                lng = args.location.lng,
+                                eventStartDay = dateDay,
+                                eventStartMonth = dateMonth,
+                                eventStartYear = dateYear,
+                                eventFavourites = eventFavouritesList,
+                                eventUserId = args.event.eventUserId,
+                                eventUserEmail = args.event.eventUserEmail,
+                                eventPetLocationCategory = currentPetLocation.category
+                            )
+
+                            if (currentPetLocation.events != null) { // If the petLocation has events (as expected)
+                                var eventIdList =
+                                    arrayListOf<String>() // Create a arrayList variable for storing event IDs
+                                currentPetLocation.events!!.forEach { // For each event in the relevant petLocation, add the event ID to the list of event IDs
+                                    eventIdList += it.eventId
+                                }
+                                println("this is eventIdList: $eventIdList")
+                                var eventId = updatedEvent.eventId
+                                println("this is eventId: $eventId")
+                                val index =
+                                    eventIdList.indexOf(updatedEvent.eventId) // Find the index position of the event ID that matches the ID of the event that was passed
+                                println("this is index: $index")
+                                var petLocationEvents1 =
+                                    currentPetLocation.events!! // Create a list of the events from the passed petLocation
+                                var short =
+                                    petLocationEvents1.removeAt(index) // Remove the event at the previously found index position within the created event list
+                                println("this is short: $short")
+                                petLocationEvents1 =
+                                    petLocationEvents1.plus(updatedEvent) as MutableList<NewEvent> // Add the passed event to the shortened list of events
+                                currentPetLocation.events =
+                                    ArrayList(petLocationEvents1) // Assign the new list of events to the found petLocation
+
+                                println("this is updated petLocation events ${currentPetLocation.events}")
+                            }
+
+                            eventViewModel.updatePetLocation(
+                                loggedInViewModel.liveFirebaseUser.value?.uid!!,
+                                args.petLocationid,
+                                currentPetLocation
+                            )
+                            eventViewModel.updateFavourite(
+                                args.event.eventUserId,
+                                updatedEvent
+                            )
                         }
-                        val action = EventDetailFragmentDirections.actionEventDetailFragmentToEventListFragment(args.PetLocationid)
+                        val action =
+                            EventDetailFragmentDirections.actionEventDetailFragmentToEventListFragment(
+                                args.petLocationid
+                            )
                         findNavController().navigate(action)
                     }
+
                     R.id.item_event_delete -> {
-                            eventViewModel.deleteEvent(loggedInViewModel.liveFirebaseUser.value?.email!!, args.eventid, args.PetLocationid)
-                            val action = EventDetailFragmentDirections.actionEventDetailFragmentToEventListFragment(args.PetLocationid)
-                            findNavController().navigate(action)
-                    }*/
+                        if (currentPetLocation.events != null) { // If the petLocation has events (as expected)
+                            var eventIdList =
+                                arrayListOf<String>() // Create a arrayList variable for storing event IDs
+                            currentPetLocation.events!!.forEach { // For each event in the relevant petLocation, add the event ID to the list of event IDs
+                                eventIdList += it.eventId
+                            }
+                            println("this is eventIdList: $eventIdList")
+                            var eventId = args.event.eventId
+                            println("this is eventId: $eventId")
+                            val index =
+                                eventIdList.indexOf(args.event.eventId) // Find the index position of the event ID that matches the ID of the event that was passed
+                            println("this is index: $index")
+                            var petLocationEvents1 =
+                                currentPetLocation.events!! // Create a list of the events from the passed petLocation
+                            var short =
+                                petLocationEvents1.removeAt(index) // Remove the event at the previously found index position within the created event list
+                            println("this is short: $short")
+
+                            currentPetLocation.events =
+                                ArrayList(petLocationEvents1) // Assign the new list of events to the found petLocation
+
+                            println("this is updated petLocation events ${currentPetLocation.events}")
+                        }
+
+                        eventViewModel.updatePetLocation(
+                            args.event.eventUserId,
+                            args.event.petLocationId,
+                            currentPetLocation
+                        )
+                        eventViewModel.removeFavourite(
+                            args.event.eventUserId,
+                            args.event.eventId
+                        )
+
+                        val action =
+                            EventDetailFragmentDirections.actionEventDetailFragmentToEventListFragment(
+                                args.petLocationid
+                            )
+                        findNavController().navigate(action)
+                    }
                 }
-                return NavigationUI.onNavDestinationSelected(menuItem,
-                    requireView().findNavController())
+                return NavigationUI.onNavDestinationSelected(
+                    menuItem,
+                    requireView().findNavController()
+                )
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
@@ -607,10 +865,4 @@ class EventDetailFragment : Fragment(), OnMapReadyCallback {
         super.onDestroyView()
         _fragBinding = null
     }
-
-    override fun onResume() {
-        super.onResume()
-
-    }
-
 }

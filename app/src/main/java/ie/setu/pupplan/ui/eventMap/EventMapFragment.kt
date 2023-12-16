@@ -1,12 +1,15 @@
 package ie.setu.pupplan.ui.eventMap
 
+import EventMapViewModel
+import android.app.Activity
 import android.content.Intent
+import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -17,18 +20,23 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import ie.setu.pupplan.R
+import ie.setu.pupplan.databinding.FragmentPetlocationNewBinding
 import ie.setu.pupplan.databinding.FragmentEventMapBinding
+
+import ie.setu.pupplan.firebase.FirebaseImageManager
 import ie.setu.pupplan.models.Location
 import ie.setu.pupplan.models.NewEvent
+import ie.setu.pupplan.models.PetLocationModel
+import ie.setu.pupplan.ui.petLocationDetail.PetLocationDetailFragmentDirections
 import ie.setu.pupplan.ui.eventDetail.EventDetailFragmentArgs
+import ie.setu.pupplan.ui.eventNew.EventNewViewModel
+
 
 class EventMapFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerDragListener,
-GoogleMap.OnMarkerClickListener {
-
+    GoogleMap.OnMarkerClickListener {
     private lateinit var eventMapViewModel: EventMapViewModel
     private val args by navArgs<EventDetailFragmentArgs>()
     private var _fragBinding: FragmentEventMapBinding? = null
-    // This property is only valid between onCreateView and onDestroyView.
     private val fragBinding get() = _fragBinding!!
 
     //lateinit var map : GoogleMap
@@ -42,15 +50,12 @@ GoogleMap.OnMarkerClickListener {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-
         location = args.location
         _fragBinding = FragmentEventMapBinding.inflate(inflater, container, false)
         val root = fragBinding.root
         eventMapViewModel = ViewModelProvider(this).get(EventMapViewModel::class.java)
-
-
         setButtonListener(fragBinding)
-        return root;
+        return root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -58,7 +63,6 @@ GoogleMap.OnMarkerClickListener {
         val mapFragment = childFragmentManager
             .findFragmentById(R.id.mapView2) as SupportMapFragment
         mapFragment.getMapAsync{
-
             onMapReady(it)
         }
     }
@@ -78,8 +82,6 @@ GoogleMap.OnMarkerClickListener {
         eventMapViewModel.map.setOnMarkerClickListener(this)
     }
 
-
-
     override fun onMarkerDragStart(marker: Marker) {
 
     }
@@ -87,7 +89,6 @@ GoogleMap.OnMarkerClickListener {
     override fun onMarkerDrag(marker: Marker)  {
         fragBinding.lat.setText("Lat: " + "%.6f".format(marker.position.latitude))
         fragBinding.lng.setText("Lng: " + "%.6f".format(marker.position.longitude))
-
     }
 
     override fun onMarkerDragEnd(marker: Marker) {
@@ -104,7 +105,6 @@ GoogleMap.OnMarkerClickListener {
         marker.snippet = "GPS : $loc"
         return false
     }
-
 
     fun setButtonListener(layout: FragmentEventMapBinding) {
         layout.fab.setOnClickListener {
@@ -125,11 +125,12 @@ GoogleMap.OnMarkerClickListener {
                     location
                 )
                 findNavController().navigate(action)
-
             }
-
         }
     }
 
 
 }
+
+
+

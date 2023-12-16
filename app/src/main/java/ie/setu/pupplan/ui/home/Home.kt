@@ -8,6 +8,7 @@ import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
@@ -54,7 +55,7 @@ class Home : AppCompatActivity() {
 
 
         appBarConfiguration = AppBarConfiguration(setOf(
-            R.id.petLocationNewFragment, R.id.petLocationListFragment, R.id.aboutFragment, R.id.eventsMapFragment), drawerLayout)
+            R.id.petLocationNewFragment, R.id.petLocationListFragment, R.id.aboutFragment, R.id.eventsMapFragment, R.id.favouritesMapFragment), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         val navView = homeBinding.navView
@@ -131,6 +132,14 @@ class Home : AppCompatActivity() {
         val intent = Intent(this, Login::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
+    }
+
+    fun lightMode(item: MenuItem) {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+    }
+
+    fun darkMode(item: MenuItem) {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
     }
 
     private fun registerImagePickerCallback() {

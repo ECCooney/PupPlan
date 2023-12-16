@@ -7,26 +7,21 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import ie.setu.pupplan.models.Favourite
 import ie.setu.pupplan.models.PetLocationModel
-import ie.setu.pupplan.models.PetLocationStore
-import ie.setu.pupplan.models.PetLocationManager
 import ie.setu.pupplan.models.NewEvent
+import ie.setu.pupplan.models.PetLocationStore
 import timber.log.Timber
 import java.util.HashMap
 import java.util.Random
 
-internal fun generateRandomId(): Long {
-    return Random().nextLong()
-}
-
 object FirebaseDBManager : PetLocationStore {
 
+    //initialise Firebase database
     var database: DatabaseReference = FirebaseDatabase.getInstance().reference
 
-    var petLocations = mutableListOf <PetLocationModel>()
-
-
-    override fun findAll(petLocationsList: MutableLiveData<List <PetLocationModel>>) {
+    //function to find and return all petLocations in database
+    override fun findAll(petLocationsList: MutableLiveData<List<PetLocationModel>>) {
         database.child("petLocations")
             .addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(error: DatabaseError) {
@@ -34,7 +29,7 @@ object FirebaseDBManager : PetLocationStore {
                 }
 
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val localList = ArrayList <PetLocationModel>()
+                    val localList = ArrayList<PetLocationModel>()
                     val children = snapshot.children
                     children.forEach {
                         val petLocation = it.getValue(PetLocationModel::class.java)
@@ -49,7 +44,32 @@ object FirebaseDBManager : PetLocationStore {
             })
     }
 
-    override fun findUserAll(userid: String, petLocationsList: MutableLiveData<List <PetLocationModel>>) {
+    //function to find and return all favourites in database. not used in current code but kept for future.
+    override fun findAllFavourites(favouritesList: MutableLiveData<List<Favourite>>) {
+        database.child("favourites")
+            .addValueEventListener(object : ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {
+                    Timber.i("Firebase Favourite error : ${error.message}")
+                }
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val localList = ArrayList<Favourite>()
+                    val children = snapshot.children
+                    children.forEach {
+                        val favourite = it.getValue(Favourite::class.java)
+                        localList.add(favourite!!)
+                    }
+                    database.child("favourites")
+                        .removeEventListener(this)
+                    println("findAllFavourites localList $localList")
+
+                    favouritesList.value = localList
+                }
+            })
+    }
+
+    //function to find and return all petLocations belonging to a user
+    override fun findUserAll(userid: String, petLocationsList: MutableLiveData<List<PetLocationModel>>) {
         database.child("user-petLocations").child(userid)
             .addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(error: DatabaseError) {
@@ -57,7 +77,7 @@ object FirebaseDBManager : PetLocationStore {
                 }
 
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val localList = ArrayList <PetLocationModel>()
+                    val localList = ArrayList<PetLocationModel>()
                     val children = snapshot.children
                     children.forEach {
                         val petLocation = it.getValue(PetLocationModel::class.java)
@@ -73,8 +93,59 @@ object FirebaseDBManager : PetLocationStore {
 
     }
 
-    // Function for finding all events on petLocation JSON file
-    override fun findEvents(userid: String, petLocationId: String, petLocation: MutableLiveData <PetLocationModel>, eventsList: MutableLiveData<List<NewEvent>>) {
+    //function to find and return all events favourited by a user, include their and those of others
+    override fun findUserAllFavourites(userid: String, favouritesList: MutableLiveData<List<Favourite>>) {
+        database.child("user-favourites").child(userid)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {
+                    Timber.i("Firebase Favourite error : ${error.message}")
+                }
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val localList = ArrayList<Favourite>()
+                    val children = snapshot.children
+                    children.forEach {
+                        val favourite = it.getValue(Favourite::class.java)
+                        localList.add(favourite!!)
+                    }
+                    database.child("user-favourites").child(userid)
+                        .removeEventListener(this)
+                    println("findUserAllFavourites localList $localList")
+
+                    favouritesList.value = localList
+                }
+            })
+    }
+
+    //function to find and return all events favourited by a user and belonging to them
+    override fun findUserUserFavourites(userid: String, favouritesList: MutableLiveData<List<Favourite>>) {
+        database.child("user-favourites").child(userid)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {
+                    Timber.i("Firebase Favourite error : ${error.message}")
+                }
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val localList = ArrayList<Favourite>()
+                    val children = snapshot.children
+                    children.forEach {
+                        val favourite = it.getValue(Favourite::class.java)
+                        if (favourite?.eventFavourite?.eventUserId == userid) {
+                            localList.add(favourite!!)
+                        }
+                    }
+                    database.child("user-favourites").child(userid)
+                        .removeEventListener(this)
+                    println("findUserAllFavourites localList $localList")
+
+                    favouritesList.value = localList
+                }
+            })
+
+    }
+
+    // function to find and return all events within a particular petLocation belonging to a user
+    override fun findEvents(userid: String, petLocationId: String, petLocation: MutableLiveData<PetLocationModel>, eventsList: MutableLiveData<List<NewEvent>>) {
         database.child("user-petLocations").child(userid).child(petLocationId)
             .addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(error: DatabaseError) {
@@ -93,7 +164,34 @@ object FirebaseDBManager : PetLocationStore {
 
     }
 
-    override fun findUserEvents(userid: String, petLocationsList: MutableLiveData<List <PetLocationModel>>, eventsList: MutableLiveData<List<NewEvent>>) {
+    //function to find and return all events from all petLocations belonging to all users
+    override fun findAllEvents(eventsList: MutableLiveData<List<NewEvent>>) {
+        database.child("petLocations")
+            .addValueEventListener(object : ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {
+                    Timber.i("Firebase Event error : ${error.message}")
+                }
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val localEventList = mutableListOf<NewEvent>()
+                    val children = snapshot.children
+                    children.forEach {
+                        val petLocation = it.getValue(PetLocationModel::class.java)
+                        val petLocationEvents = petLocation?.events?.toMutableList()
+                        if (petLocationEvents != null) {
+                            localEventList += petLocationEvents.toMutableList()
+                        }
+                    }
+                    database.child("petLocations")
+                        .removeEventListener(this)
+                    eventsList.value = localEventList
+                }
+            })
+
+    }
+
+    //function to find and return all events from all petLocations belonging to a user. Not used in code but kept for future
+    override fun findUserEvents(userid: String, petLocationsList: MutableLiveData<List<PetLocationModel>>, eventsList: MutableLiveData<List<NewEvent>>) {
         database.child("user-petLocations").child(userid)
             .addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(error: DatabaseError) {
@@ -119,8 +217,8 @@ object FirebaseDBManager : PetLocationStore {
 
     }
 
-    // Function for finding individual event on petLocation JSON file, using passed event ID
-    override fun findUserEvent(userid: String, petLocationsList: MutableLiveData<List <PetLocationModel>>, eventsList: MutableLiveData<List<NewEvent>>, eventId: String, event: MutableLiveData<NewEvent>) {
+    // function for finding and returning individual event belonging to user. Not used in code but kept for future.
+    override fun findUserEvent(userid: String, petLocationsList: MutableLiveData<List<PetLocationModel>>, eventsList: MutableLiveData<List<NewEvent>>, eventId: String, event: MutableLiveData<NewEvent>) {
         database.child("user-petLocations").child(userid)
             .addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(error: DatabaseError) {
@@ -146,7 +244,7 @@ object FirebaseDBManager : PetLocationStore {
             })
     }
 
-    // Function for finding individual event on petLocation JSON file, using passed event ID
+    // function for finding and returning individual event belonging to any user.
     override fun findEvent(eventsList: MutableLiveData<List<NewEvent>>, eventId: String, event: MutableLiveData<NewEvent>) {
         database.child("petLocations")
             .addValueEventListener(object : ValueEventListener {
@@ -173,17 +271,13 @@ object FirebaseDBManager : PetLocationStore {
             })
     }
 
-    // Function for finding individual petLocation on petLocation JSON file, using passed petLocation
-    override fun findPetLocation(petLocation: PetLocationModel): PetLocationModel? {
-        logAll()
-        return PetLocationManager.petLocations.find { p -> p.uid == petLocation.uid }
-    }
 
-    // Function for finding individual petLocation on petLocation JSON file, using passed petLocation
+
+    // function for finding and returning individual petLocation belonging to a user.
     override fun findPetLocationById(
         userid: String,
         id: String,
-        petLocation: MutableLiveData <PetLocationModel>
+        petLocation: MutableLiveData<PetLocationModel>
     ) {
 
         database.child("user-petLocations").child(userid)
@@ -197,34 +291,7 @@ object FirebaseDBManager : PetLocationStore {
 
     }
 
-
-
-    // Function for finding individual petLocation on petLocation JSON file, using passed petLocation
-    override fun findPetLocationById2(
-        userid: String,
-        id: String,
-        petLocation: MutableLiveData <PetLocationModel>
-    ): PetLocationModel? {
-        var currentPetLocation = PetLocationModel()
-        val ref = database.child("user-petLocations").child(userid).child(id.toString())
-        val menuListener = object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                currentPetLocation = dataSnapshot.getValue(PetLocationModel::class.java)!!
-                println("this is the currentPort inside $currentPetLocation")
-
-            }
-            override fun onCancelled(databaseError: DatabaseError) {
-                // handle error
-            }
-        }
-        ref.addListenerForSingleValueEvent(menuListener)
-        println("this is the currentPort outside $currentPetLocation")
-
-        return currentPetLocation
-
-    }
-
-    // Function for creating new petLocation on petLocation JSON file
+    // function for creating new petLocation in Firebase real-time database
     override fun create(firebaseUser: MutableLiveData<FirebaseUser>, petLocation: PetLocationModel) {
         Timber.i("Firebase DB Reference : $database")
         //petLocation.id = generateRandomId() // Generation of random id for petLocation
@@ -245,15 +312,29 @@ object FirebaseDBManager : PetLocationStore {
         database.updateChildren(childAdd)
     }
 
-    // Function for updating existing petLocation on petLocation JSON file, using passed petLocation
+    // function for creating new favourite in Firebase real-time database
+    override fun createFavourite(firebaseUser: MutableLiveData<FirebaseUser>, favourite: Favourite) {
+        Timber.i("Firebase DB Reference : $database")
+        val uid = firebaseUser.value!!.uid
+        val key = database.child("favourites").push().key
+        if (key == null) {
+            Timber.i("Firebase Error : Key Empty")
+            return
+        }
+        favourite.uid = key
+        val favouriteValues = favourite.toMap()
+
+        val childAdd = HashMap<String, Any>()
+        childAdd["/favourites/$key"] = favouriteValues
+        childAdd["/user-favourites/$uid/$key"] = favouriteValues
+
+        database.updateChildren(childAdd)
+    }
+
+    // function for updating existing petLocation in Firebase, using passed petLocation
     override fun update(userid: String, petLocationid: String, petLocation: PetLocationModel) {
 
         val petLocationValues = petLocation.toMap()
-
-        println("this is userid in update $userid")
-        println("this is petLocationid in update $petLocationid")
-        println("this is petLocation in update $petLocation")
-
 
         val childUpdate : MutableMap<String, Any?> = HashMap()
         childUpdate["petLocations/$petLocationid"] = petLocationValues
@@ -262,7 +343,46 @@ object FirebaseDBManager : PetLocationStore {
         database.updateChildren(childUpdate)
     }
 
-    // Function for deleting on JSON file
+    // function for updating event in existing favourite in Firebase, using passed event
+    override fun updateFavourite(userid: String, event: NewEvent) {
+        database.child("favourites")
+            .addValueEventListener(object : ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {
+                    Timber.i("Firebase Favourite error : ${error.message}")
+                }
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val localList = ArrayList<Favourite>()
+                    val children = snapshot.children
+                    children.forEach {
+                        val favourite = it.getValue(Favourite::class.java)
+                        localList.add(favourite!!)
+                    }
+                    database.child("favourites")
+                        .removeEventListener(this)
+                    println("findAllFavourites localList $localList")
+
+                    localList.forEach {
+                        if (it.eventFavourite?.eventId == event.eventId) {
+                            val favouriteId = it?.uid
+                            val favourite = Favourite(uid = favouriteId, eventFavourite = event)
+                            val favouriteValues = favourite.toMap()
+
+                            val childUpdate : MutableMap<String, Any?> = HashMap()
+                            childUpdate["favourites/$favouriteId"] = favouriteValues
+                            childUpdate["user-favourites/$userid/$favouriteId"] = favouriteValues
+
+                            database.updateChildren(childUpdate)
+                        }
+                    }
+
+                }
+            })
+    }
+
+
+
+    // function for deleting petLocation on Firebase, using passed petLocation and user IDs
     override fun delete(userid: String, petLocationId: String) {
         val childDelete : MutableMap<String, Any?> = HashMap()
         childDelete["/petLocations/$petLocationId"] = null
@@ -271,6 +391,43 @@ object FirebaseDBManager : PetLocationStore {
         database.updateChildren(childDelete)
     }
 
+    // function for deleting favourite on Firebase, using passed petLocation and user IDs
+    override fun deleteFavourite(userid: String, eventId: String) {
+        database.child("favourites")
+            .addValueEventListener(object : ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {
+                    Timber.i("Firebase Favourite error : ${error.message}")
+                }
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val localList = ArrayList<Favourite>()
+                    val children = snapshot.children
+                    children.forEach {
+                        val favourite = it.getValue(Favourite::class.java)
+                        localList.add(favourite!!)
+                    }
+                    database.child("favourites")
+                        .removeEventListener(this)
+                    println("findAllFavourites localList $localList")
+
+                    //in case there are more than one favourites listed for a particular event, a forEach loop is used
+                    localList.forEach {
+                        if (it.eventFavourite?.eventId == eventId) {
+                            val favouriteId = it?.uid
+                            val childDelete : MutableMap<String, Any?> = HashMap()
+                            childDelete["/favourites/$favouriteId"] = null
+                            childDelete["/user-favourites/$userid/$favouriteId"] = null
+
+                            database.updateChildren(childDelete)
+                        }
+                    }
+                }
+            })
+
+
+    }
+
+    //function to update the references in a profile image in case it was already uploaded but Firebase reassigned a reference
     fun updateImageRef(userid: String,imageUri: String, path: String) {
 
         val userPetLocations = database.child("user-petLocations").child(userid)
@@ -290,157 +447,6 @@ object FirebaseDBManager : PetLocationStore {
                     }
                 }
             })
-    }
-
-    // Function for using Timber to log each petLocation in petLocation list
-    private fun logAll() {
-        PetLocationManager.petLocations.forEach { Timber.i("$it") }
-    }
-
-    // Function for using Timber to log each event associated to petLocations in petLocation list
-    private fun logEvents() {
-        PetLocationManager.petLocations.forEach {
-            var petLocationEvents = it.events?.toMutableList()
-            if (petLocationEvents != null) {
-                events += petLocationEvents.toMutableList()
-            }
-        }
-    }
-
-    // Creation of events list
-    var events = mutableListOf<NewEvent>()
-
-
-    // Function to find specific petLocations based on passed petLocation category
-    override fun findSpecificPetLocations(petLocationCategory: String): MutableList <PetLocationModel> {
-        var list =
-            PetLocationManager.petLocations.filter { p -> p.category == petLocationCategory } // Create a list based on matching/filtering petLocation categorys
-        return list.toMutableList() // Return mutable list and log
-        println("this is list: $list")
-        logAll()
-        return PetLocationManager.petLocations
-    }
-
-    // Function to find events that come from petLocations of specific category, using data on passed category
-    override fun findSpecificTypeEvents(petLocationCategory: String): MutableList<NewEvent> {
-        var list =
-            PetLocationManager.petLocations.filter { p -> p.category == petLocationCategory } // Create a list based on matching/filtering petLocation categorys
-        println("this is list: $list")
-        var petLocationCategoryEventsOverall: MutableList<NewEvent> =
-            arrayListOf() // Create a mutable list for following
-        if (list.isNotEmpty()) { // If there are at least some petLocations (i.e. selection wasn't made on empty list)
-            list.forEach { // For each petLocation in the list, make a list of the petLocation's events. If there is a previous list of events from other petLocations, add the current petLocation events to that list
-                println("event item: " + it.events?.toMutableList())
-                var petLocationCategoryEvents = it.events?.toMutableList()
-                println("this is petLocationCategoryEvent: $petLocationCategoryEvents")
-                if (petLocationCategoryEvents != null) {
-                    petLocationCategoryEventsOverall += petLocationCategoryEvents.toMutableList()
-                    events = petLocationCategoryEventsOverall.toMutableList()
-                }
-            }
-        } else { // Otherwise return an empty array
-            events = arrayListOf()
-        }
-        println("this is final returned events: $events")
-        return events
-    }
-
-    // Function for creating a new event using passed data for event and petLocation
-    override fun createEvent(event: NewEvent, petLocation: PetLocationModel) {
-        //event.eventId = ie.setu.pupplan.models.generateRandomId()
-        var foundPetLocation: PetLocationModel? =
-            PetLocationManager.petLocations.find { p -> p.uid == petLocation.uid } // Finding matching petLocation
-        if (foundPetLocation != null) {
-            if (foundPetLocation.events != null) { // If there are already events in the petLocation, add this event to the list
-                var petLocationEvents = foundPetLocation.events
-                petLocationEvents = petLocationEvents?.plus(event)?.toMutableList()
-                foundPetLocation.events = petLocationEvents
-            } else {
-                foundPetLocation.events =
-                    listOf(event).toMutableList() // Otherwise initiate a new array of events
-            }
-            //serialize() // Add event to petLocation JSON file
-            logAll()
-        }
-    }
-
-    // Function for updating a event using passed data for event and related petLocation
-    override fun updateEvent(event: NewEvent, petLocation: PetLocationModel) {
-
-        // Process for updating petLocation JSON file
-        /* var foundPetLocation: PetLocationModel? =
-             PetLocationManager.petLocations.find { p -> p.id == petLocation.id } // Find the relevant petLocation from the petLocations list based on matching id of passed petLocation
-         if (foundPetLocation != null) { // If the petLocation is found...
-             if (foundPetLocation.events != null) { // And the petLocation has events (as expected)
-                 var eventIdList =
-                     arrayListOf<Long>() // Create a arrayList variable for storing event IDs
-                 foundPetLocation.events!!.forEach { // For each event in the relevant petLocation, add the event ID to the list of event IDs
-                     eventIdList += it.eventId
-                 }
-                 println("this is eventIdList: $eventIdList")
-                 var eventId = event.eventId
-                 println("this is eventId: $eventId")
-                 val index =
-                     eventIdList.indexOf(event.eventId) // Find the index position of the event ID that matches the ID of the event that was passed
-                 println("this is index: $index")
-                 var petLocationEvents1 =
-                     foundPetLocation.events!!.toMutableList() // Create a list of the events from the passed petLocation
-                 var short =
-                     petLocationEvents1.removeAt(index) // Remove the event at the previously found index position within the created event list
-                 println("this is short: $short")
-                 petLocationEvents1 =
-                     petLocationEvents1.plus(event) as MutableList<NewEvent> // Add the passed event to the shortened list of events
-                 foundPetLocation.events =
-                     ArrayList(petLocationEvents1).toTypedArray() // Assign the new list of events to the found petLocation
-             }
-             //serialize() // Update the petLocation JSON file
-             logAll()
-         }*/
-    }
-
-    // Function to delete a event based on passed data for event and petLocation
-    override fun deleteEvent(event: NewEvent, petLocation: PetLocationModel) {
-        /*var foundPetLocation: PetLocationModel? = PetLocationManager.petLocations.find { p -> p.id == petLocation.id }
-        if (foundPetLocation != null) { // If the petLocation is found...
-            if (foundPetLocation.events != null) { // And the petLocation has events (as expected)
-                var eventIdList =
-                    arrayListOf<Long>() // Create a arrayList variable for storing event IDs
-                foundPetLocation.events!!.forEach { // For each event in the relevant petLocation, add the event ID to the list of event IDs
-                    eventIdList += it.eventId
-                }
-                println("this is eventIdList: $eventIdList")
-                val index =
-                    eventIdList.indexOf(event.eventId) // Find the index position of the event ID that matches the ID of the event that was passed
-                println("this is index: $index")
-                var petLocationEvents1 =
-                    foundPetLocation.events!!.toMutableList() // Create a list of the events from the passed petLocation
-                var short =
-                    petLocationEvents1.removeAt(index) // Remove the event at the previously found index position within the created event list
-                println("this is short: $short")
-                foundPetLocation.events =
-                    ArrayList(petLocationEvents1).toTypedArray() // Assign the new list of events to the found petLocation
-            }
-            //serialize() // Update the petLocation JSON file
-            logAll()
-        }*/
-    }
-
-    override fun findEventById(eventId: String, petLocationId: String): NewEvent? {
-        var foundEvent: NewEvent? = null
-        // Process for updating petLocation JSON file
-        var foundPetLocation: PetLocationModel? =
-            PetLocationManager.petLocations.find { p -> p.uid == petLocationId } // Find the relevant petLocation from the petLocations list based on matching id of passed petLocation
-        if (foundPetLocation != null) { // If the petLocation is found...
-            if (foundPetLocation.events != null) { // And the petLocation has events (as expected)
-
-                foundPetLocation.events!!.forEach { // For each event in the relevant petLocation, add the event ID to the list of event IDs
-                    if (it.eventId == eventId) {
-                        foundEvent = it
-                    }
-                }
-            }
-        }
-        return foundEvent
     }
 
 }

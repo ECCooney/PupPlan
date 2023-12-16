@@ -17,11 +17,30 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="grey">#6A6767</color>
-    <color name="colorPrimary">#FFFFFF</color>
+    <color name="colorPrimary">#FFFFFFFF</color>
     <color name="colorPrimaryDark">#000000</color>
     <color name="colorTitles">#FF018786</color>
+    <color name="colorOtherTitles">#027A76</color>
     <color name="colorSubTitles">#2AA599</color>
     <color name="colorAccent">#4c90af</color>
     <color name="colorAccentVariant">#2AADB1</color>
     <color name="colorButtons">#167477</color>
+    <color name="colorAddFavourite">#167731</color>
+    <color name="colorRemoveFavourite">#A52626</color>
+
+    <color name="oblack">#FFFFFFFF</color>
+    <color name="owhite">#FF000000</color>
+    <color name="ogrey">#453F3F</color>
+    <color name="ocolorPrimary">#353232</color>
+    <color name="ocolorPrimaryDark">#D3AFAF</color>
+    <color name="ocolorTitles">#013333</color>
+    <color name="ocolorOtherTitles">#0D3937</color>
+    <color name="ocolorSubTitles">#32514E</color>
+    <color name="ocolorAccent">#103C50</color>
+    <color name="ocolorAccentVariant">#264B4C</color>
+    <color name="ocolorButtons">#59898A</color>
+    <color name="ocolorAddFavourite">#0F4D20</color>
+    <color name="ocolorRemoveFavourite">#701C1C</color>
+
+
 </resources>

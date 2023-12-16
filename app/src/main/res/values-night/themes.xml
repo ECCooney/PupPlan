@@ -1,12 +1,82 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.PupPlan" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    <style name="Theme.PupPlan" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/ocolorTitles</item>
+        <item name="colorPrimaryVariant">@color/ocolorSubTitles</item>
+        <item name="colorOnPrimary">@color/owhite</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/ocolorAccent</item>
+        <item name="colorOnSecondary">@color/oblack</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" >?attr/colorPrimaryVariant</item>
+        <!-- Customize your theme here. -->
     </style>
-    <!-- Base application theme. -->
-    <style name="Base.Theme.App.Starting" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+
+    <style name="Theme.PupPlan.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
+
+    <style name="Theme.PupPlan.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.PupPlan.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <!-- START Firebase Resources-->
+    <!-- Activity with no Title -->
+    <style name="ThemeOverlay.MyNoTitleActivity" parent="Theme.PupPlan">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <!-- Dark Buttons -->
+    <style name="ThemeOverlay.MyDarkButton" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="colorButtonNormal">@color/colorButtons</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:layout_marginRight">4dp</item>
+        <item name="android:layout_marginLeft">4dp</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <!-- Input Texts -->
+    <style name="ThemeOverlay.InputText" parent="ThemeOverlay.AppCompat.Light">
+        <item name="android:textColor">@color/ocolorPrimaryDark</item>
+    </style>
+
+    <!-- Light EditTexts -->
+    <style name="ThemeOverlay.MyLightEditText" parent="ThemeOverlay.AppCompat.Dark"/>
+
+    <style name="ThemeOverlay.MyTextDetail" parent="Theme.PupPlan">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fadeScrollbars">true</item>
+        <item name="android:gravity">center</item>
+        <item name="android:maxLines">5</item>
+        <item name="android:padding">4dp</item>
+        <item name="android:scrollbars">vertical</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="ThemeOverlay.FirebaseIcon" parent="Theme.PupPlan">
+        <item name="android:layout_marginTop">@dimen/icon_top_margin</item>
+        <item name="android:layout_marginBottom">@dimen/icon_bottom_margin</item>
+    </style>
+
+    <style name="ThemeOverlay.MyTitleText" parent="Theme.PupPlan">
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">30sp</item>
+    </style>
+
+    <style name="MenuTextAppearance">
+        <item name="fontFamily">@font/anton</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="toggleStyle">
+        <item name="colorControlActivated">@color/colorWhite</item>
+        <item name="colorControlHighlight">@color/black</item>
+    </style>
+    <!-- END Firebase Resources-->
 </resources>

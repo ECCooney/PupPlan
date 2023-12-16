@@ -2,7 +2,10 @@ package ie.setu.pupplan.ui.eventList
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.navigation.fragment.navArgs
+import androidx.navigation.navArgument
 import com.google.firebase.auth.FirebaseUser
 import ie.setu.pupplan.firebase.FirebaseDBManager
 import ie.setu.pupplan.models.NewEvent
@@ -20,15 +23,14 @@ class EventListViewModel : ViewModel() {
 
     var liveFirebaseUser = MutableLiveData<FirebaseUser>()
 
-    private val petLocation = MutableLiveData <PetLocationModel>()
+    private val petLocation = MutableLiveData<PetLocationModel>()
 
-    var observablePetLocation: LiveData <PetLocationModel>
+    var observablePetLocation: LiveData<PetLocationModel>
         get() = petLocation
         set(value) {petLocation.value = value.value}
 
     fun load(petLocationid: String) {
         try {
-            //DonationManager.findAll(liveFirebaseUser.value?.email!!, donationsList)
             FirebaseDBManager.findEvents(liveFirebaseUser.value?.uid!!,petLocationid, petLocation, eventsList)
             Timber.i("Report Load Success : ${eventsList.value.toString()}")
         }
@@ -37,9 +39,17 @@ class EventListViewModel : ViewModel() {
         }
     }
 
+    fun loadAll() {
+        try {
+            FirebaseDBManager.findAllEvents(eventsList)
+            Timber.i("Report LoadAll Success : ${eventsList.value.toString()}")
+        }
+        catch (e: Exception) {
+            Timber.i("Report LoadAll Error : $e.message")
+        }
+    }
+
     fun getPetLocation(userid: String, id: String) {
-        //var currentPetLocation = FirebaseDBManager.findPetLocationById(userid, id, petLocation)
-        //println("this is currentpetLocation $currentPetLocation")
         try {
             FirebaseDBManager.findPetLocationById(userid, id, petLocation)
             Timber.i(
@@ -51,23 +61,6 @@ class EventListViewModel : ViewModel() {
             Timber.i("Detail getPetLocation() Error : $e.message")
         }
     }
-
-
-
-    /*init {
-        load(state["petLocationid"]!!)
-    }*/
-
-    /*fun load(petLocationid: String) {
-        try {
-            //DonationManager.findAll(liveFirebaseUser.value?.email!!, donationsList)
-            FirebaseDBManager.findEvents(liveFirebaseUser.value?.uid!!,eventsList)
-            Timber.i("Report Load Success : ${eventsList.value.toString()}")
-        }
-        catch (e: Exception) {
-            Timber.i("Report Load Error : $e.message")
-        }
-    }*/
 
     fun delete(userid: String, eventid: String, petLocationid: String) {
         try {
@@ -87,5 +80,16 @@ class EventListViewModel : ViewModel() {
         } catch (e: Exception) {
             Timber.i("Detail update() Error : $e.message")
         }
+    }
+
+    fun removeFavourite(userid: String, eventId: String) {
+
+        try {
+            FirebaseDBManager.deleteFavourite(userid, eventId)
+            Timber.i("Detail delete() Success : $eventId")
+        } catch (e: Exception) {
+            Timber.i("Detail delete() Error : $e.message")
+        }
+
     }
 }
