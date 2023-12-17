@@ -8,7 +8,7 @@
     <string name="amount">Amount</string>
     <string name="total">Total so Far</string>
     <string name="totalSoFar">$ %1$d</string>
-    <string name="reportTitle">Donations Report</string>
+    <string name="reportTitle">petLocations Report</string>
     <string name="defaultAmount">00</string>
     <string name="defaultMethod">N/A</string>
     <string name="enter_amount">Enter Amount</string>
@@ -26,16 +26,16 @@
     <string name="aboutus_title">Welcome to Pupplan !!</string>
     <string name="aboutus_message">Thanks for Using PupPlan\n\nA Better Way To Display Your Locations</string>
     <string name="aboutus_message2">Check Out Our Website!</string>
-    <string name="donationsNotFound">No Donations Yet…\nGo Make a Donation!</string>
-    <string name="donationError">Error : Couldn\'t Make a Donation…</string>
-    <string name="donationDetails">Donation Details</string>
+    <string name="petLocationsNotFound">No Locations Yet…\nGo Make a Location!</string>
+    <string name="petLocationError">Error : Couldn\'t Make a Location…</string>
+    <string name="petLocationDetails">petLocation Details</string>
 
     <string name="amt">Amount :</string>
     <string name="payment">Payment :</string>
     <string name="message">Message :</string>
     <string name="upvotes">UpVotes :</string>
 
-    <string name="messageLoading">Please Wait while the Donations are Loading...</string>
+    <string name="messageLoading">Please Wait while the petLocations are Loading...</string>
 
     <!-- START Firebase Resources-->
 
@@ -123,13 +123,12 @@
     <string name="event_images_label">Event Images</string>
     <string name="event_start_label">Event Start Date</string>
     <string name="btn_cost_filter">Filter Event Costs</string>
-    <string name="petLocation_filter_label">Filter Location Categorys</string>
+    <string name="petLocation_filter_label">Filter by Category</string>
     <string name="new_event_label">New Event</string>
     <string name="petLocation_image_label">Location Image</string>
     <string name="event_save">Event Save</string>
     <string name="petLocation_save">Location Save</string>
     <string name="event_petLocation_placeholder">Location Title</string>
-    <string name="petLocationsNotFound">No Locations Entered Yet…\nEnter a New Location!</string>
     <string name="petLocationMessageLoading">Please wait while the Locations are loading...</string>
     <string name="nav_header_title">PupPlan</string>
     <string name="nav_header_subtitle">Promote Your Events!</string>
@@ -139,8 +138,9 @@
     <string name="action_new_petLocation">New Location</string>
     <string name="action_new_event">New Event</string>
     <string name="menu_home">Home</string>
-    <string name="group_map">Map of Events</string>
+    <string name="group_map">Maps</string>
     <string name="action_map">Events</string>
+    <string name="action_map_petLocations">Locations</string>
     <string name="action_petLocation">New Location</string>
     <string name="action_favourites">Favourites</string>
     <string name="add_favourites">Add To Favourites</string>
@@ -153,5 +153,6 @@
     <string name="dark_mode">Dark Mode</string>
     <string name="date_view">Start Date</string>
     <string name="hint_eventCost">Free</string>
+    <string name="hint_action_location">Address</string>
 
 </resources>

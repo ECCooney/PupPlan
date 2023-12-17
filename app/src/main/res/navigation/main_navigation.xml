@@ -161,4 +161,13 @@
             android:id="@+id/action_favouritesMapFragment_to_eventDetailFragment"
             app:destination="@id/eventDetailFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/mapsFragment"
+        android:name="ie.setu.pupplan.ui.maps.MapsFragment"
+        android:label="Locations Map"
+        tools:layout="@layout/fragment_maps" >
+        <action
+            android:id="@+id/action_mapsFragment2_to_petLocationDetailFragment"
+            app:destination="@id/petLocationDetailFragment" />
+    </fragment>
 </navigation>

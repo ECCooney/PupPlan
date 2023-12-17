@@ -65,17 +65,17 @@ class EventNewFragment : Fragment(), OnMapReadyCallback {
     private lateinit var image2IntentLauncher : ActivityResultLauncher<Intent>
     private lateinit var image3IntentLauncher : ActivityResultLauncher<Intent>
     private lateinit var mapIntentLauncher : ActivityResultLauncher<Intent>
-    var eventCost = "€0-€50K" // Event cost initial selection
+    var eventCost = "Free" // Event cost initial selection
     var image: String = ""
-    val eventCosts = arrayOf("€0-€50K", "€50K-€100K", "€100K-€250K", "€250K-€500K", "€500K-€1M", "€1M+") // Creating array of different event costs
+    val eventCosts = arrayOf ("Show All", "Free", "€0-€10", "€10-€25", "€25-€50", "€50-€100", "€100+")
     val today = Calendar.getInstance()
     var dateDay = today.get(Calendar.DAY_OF_MONTH)
     var dateMonth = today.get(Calendar.MONTH)
     var dateYear = today.get(Calendar.YEAR)
     var event = NewEvent()
     var currentPetLocation = PetLocationModel()
-    var initialLocation = Location(52.245696, -7.139102, 15f)
-    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient //from https://www.tutorialspoint.com/how-to-show-current-location-on-a-google-map-on-android-using-kotlin
+    var initialLocation = Location(53.5259, -7.3381, 15f)
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient  // https://developers.google.com/android/reference/com/google/android/gms/location/FusedLocationProviderClient
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -138,7 +138,7 @@ class EventNewFragment : Fragment(), OnMapReadyCallback {
                 location = args.location
             }
 
-            val action = EventNewFragmentDirections.actionEventNewFragmentToEventMapFragment(location, args.petLocationid,NewEvent(eventTitle = fragBinding.eventTitle.text.toString(), eventDescription = fragBinding.eventDescription.text.toString(),
+            val action = EventNewFragmentDirections.actionEventNewFragmentToEventMapFragment(location, args.petLocationid ,NewEvent(eventTitle = fragBinding.eventTitle.text.toString(), eventDescription = fragBinding.eventDescription.text.toString(),
                 eventCost = eventCost, eventImage = event.eventImage, eventImage2 = event.eventImage2, eventImage3 = event.eventImage3,
                 petLocationId = args.petLocationid, lat = location.lat, lng = location.lng, zoom = 15f, eventUserId = loggedInViewModel.liveFirebaseUser.value?.uid!!, eventUserEmail = loggedInViewModel.liveFirebaseUser.value?.email!!,
                 eventStartDay = dateDay, eventStartMonth = dateMonth, eventStartYear = dateYear, eventPetLocationName = currentPetLocation.title, eventPetLocationCategory = currentPetLocation.category))
@@ -290,8 +290,6 @@ class EventNewFragment : Fragment(), OnMapReadyCallback {
             dateDay = day
             dateMonth = month
             dateYear = year
-            // Toast is turned off, but can be turned back on
-            //Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
             println ("this is dateDay: $dateDay")
             println ("this is dateMonth: $dateMonth")
             println ("this is dateYear: $dateYear")
@@ -337,7 +335,7 @@ class EventNewFragment : Fragment(), OnMapReadyCallback {
 
     private fun getCurrentPetLocation(petLocation: PetLocationModel) {
         currentPetLocation = petLocation
-        println("this is newCurrentPetLocation3 $currentPetLocation")
+        println("this is newCurrentPetLocation $currentPetLocation")
     }
     @SuppressLint("MissingPermission")
     fun setButtonListener(layout: FragmentEventNewBinding) {

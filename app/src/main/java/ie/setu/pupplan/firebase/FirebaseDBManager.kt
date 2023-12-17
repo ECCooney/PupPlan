@@ -43,31 +43,6 @@ object FirebaseDBManager : PetLocationStore {
                 }
             })
     }
-
-    //function to find and return all favourites in database. not used in current code but kept for future.
-    override fun findAllFavourites(favouritesList: MutableLiveData<List<Favourite>>) {
-        database.child("favourites")
-            .addValueEventListener(object : ValueEventListener {
-                override fun onCancelled(error: DatabaseError) {
-                    Timber.i("Firebase Favourite error : ${error.message}")
-                }
-
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val localList = ArrayList<Favourite>()
-                    val children = snapshot.children
-                    children.forEach {
-                        val favourite = it.getValue(Favourite::class.java)
-                        localList.add(favourite!!)
-                    }
-                    database.child("favourites")
-                        .removeEventListener(this)
-                    println("findAllFavourites localList $localList")
-
-                    favouritesList.value = localList
-                }
-            })
-    }
-
     //function to find and return all petLocations belonging to a user
     override fun findUserAll(userid: String, petLocationsList: MutableLiveData<List<PetLocationModel>>) {
         database.child("user-petLocations").child(userid)
@@ -94,7 +69,7 @@ object FirebaseDBManager : PetLocationStore {
     }
 
     //function to find and return all events favourited by a user, include their and those of others
-    override fun findUserAllFavourites(userid: String, favouritesList: MutableLiveData<List<Favourite>>) {
+    override fun findAllFavourites(userid: String, favouritesList: MutableLiveData<List<Favourite>>) {
         database.child("user-favourites").child(userid)
             .addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(error: DatabaseError) {
@@ -118,7 +93,7 @@ object FirebaseDBManager : PetLocationStore {
     }
 
     //function to find and return all events favourited by a user and belonging to them
-    override fun findUserUserFavourites(userid: String, favouritesList: MutableLiveData<List<Favourite>>) {
+    override fun findUserFavourites(userid: String, favouritesList: MutableLiveData<List<Favourite>>) {
         database.child("user-favourites").child(userid)
             .addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(error: DatabaseError) {
@@ -190,61 +165,8 @@ object FirebaseDBManager : PetLocationStore {
 
     }
 
-    //function to find and return all events from all petLocations belonging to a user. Not used in code but kept for future
-    override fun findUserEvents(userid: String, petLocationsList: MutableLiveData<List<PetLocationModel>>, eventsList: MutableLiveData<List<NewEvent>>) {
-        database.child("user-petLocations").child(userid)
-            .addValueEventListener(object : ValueEventListener {
-                override fun onCancelled(error: DatabaseError) {
-                    Timber.i("Firebase PetLocation error : ${error.message}")
-                }
 
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val localEventList = mutableListOf<NewEvent>()
-                    val children = snapshot.children
-                    children.forEach {
-                        val petLocation = it.getValue(PetLocationModel::class.java)
-                        val petLocationEvents = petLocation?.events?.toMutableList()
-                        if (petLocationEvents != null) {
-                            localEventList += petLocationEvents.toMutableList()
-                        }
-                    }
-                    database.child("user-petLocations").child(userid)
-                        .removeEventListener(this)
-
-                    eventsList.value = localEventList
-                }
-            })
-
-    }
-
-    // function for finding and returning individual event belonging to user. Not used in code but kept for future.
-    override fun findUserEvent(userid: String, petLocationsList: MutableLiveData<List<PetLocationModel>>, eventsList: MutableLiveData<List<NewEvent>>, eventId: String, event: MutableLiveData<NewEvent>) {
-        database.child("user-petLocations").child(userid)
-            .addValueEventListener(object : ValueEventListener {
-                override fun onCancelled(error: DatabaseError) {
-                    Timber.i("Firebase PetLocation error : ${error.message}")
-                }
-
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val localEventList = mutableListOf<NewEvent>()
-                    val children = snapshot.children
-                    children.forEach {
-                        val petLocation = it.getValue(PetLocationModel::class.java)
-                        val petLocationEvents = petLocation?.events?.toMutableList()
-                        if (petLocationEvents != null) {
-                            localEventList += petLocationEvents.toMutableList()
-                        }
-                    }
-                    database.child("user-petLocations").child(userid)
-                        .removeEventListener(this)
-
-                    eventsList.value = localEventList
-                    event.value = localEventList.find { p -> p.eventId == eventId }
-                }
-            })
-    }
-
-    // function for finding and returning individual event belonging to any user.
+    // function for finding and returning individual event.
     override fun findEvent(eventsList: MutableLiveData<List<NewEvent>>, eventId: String, event: MutableLiveData<NewEvent>) {
         database.child("petLocations")
             .addValueEventListener(object : ValueEventListener {

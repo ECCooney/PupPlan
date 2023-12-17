@@ -51,7 +51,7 @@ class EventAdapter constructor(private var events: ArrayList<NewEvent>,
                 Picasso.get().load(event.eventImage).resize(200,200).into(binding.eventImageIcon)
             }
             //favourite star only shown if favourite user ID matching with event user ID
-            val eventFavouriteId = event.eventFavourites?.find { p -> p == event.eventUserId }
+            val eventFavouriteId = event.eventFavourites?.find { e -> e == event.eventUserId }
             if (eventFavouriteId == null) {
                 binding.imageFavourite.visibility = View.GONE
             } else {

@@ -23,9 +23,9 @@
                 android:icon="@android:drawable/ic_menu_mapmode"
                 android:title="@string/action_map" />
             <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="@string/action_send" />
+                android:id="@+id/mapsFragment"
+                android:icon="@android:drawable/ic_menu_mapmode"
+                android:title="@string/action_map_petLocations" />
         </menu>
     </item>
     <item android:title="Access Control">

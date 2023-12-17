@@ -1,5 +1,6 @@
 package ie.setu.pupplan.ui.home
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -25,9 +26,14 @@ import ie.setu.pupplan.databinding.NavHeaderBinding
 import ie.setu.pupplan.firebase.FirebaseImageManager
 import ie.setu.pupplan.ui.auth.LoggedInViewModel
 import ie.setu.pupplan.ui.auth.Login
+import ie.setu.pupplan.ui.maps.MapsViewModel
+import ie.setu.pupplan.utils.checkLocationPermissions
+import ie.setu.pupplan.utils.isPermissionGranted
 import ie.setu.pupplan.utils.readImageUri
 import ie.setu.pupplan.utils.showImagePicker
 import timber.log.Timber
+import android.location.Location
+import androidx.activity.viewModels
 
 class Home : AppCompatActivity() {
 
@@ -38,6 +44,7 @@ class Home : AppCompatActivity() {
     private lateinit var loggedInViewModel : LoggedInViewModel
     private lateinit var headerView : View
     private lateinit var intentImageLauncher : ActivityResultLauncher<Intent>
+    private val mapsViewModel : MapsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,9 +60,13 @@ class Home : AppCompatActivity() {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
 
+        if(checkLocationPermissions(this)) {
+            mapsViewModel.updateCurrentLocation()
+        }
+
 
         appBarConfiguration = AppBarConfiguration(setOf(
-            R.id.petLocationNewFragment, R.id.petLocationListFragment, R.id.aboutFragment, R.id.eventsMapFragment, R.id.favouritesMapFragment), drawerLayout)
+            R.id.petLocationNewFragment, R.id.petLocationListFragment, R.id.aboutFragment, R.id.mapsFragment, R.id.eventsMapFragment, R.id.favouritesMapFragment), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         val navView = homeBinding.navView
@@ -134,13 +145,6 @@ class Home : AppCompatActivity() {
         startActivity(intent)
     }
 
-    fun lightMode(item: MenuItem) {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-    }
-
-    fun darkMode(item: MenuItem) {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-    }
 
     private fun registerImagePickerCallback() {
         intentImageLauncher =
@@ -159,6 +163,21 @@ class Home : AppCompatActivity() {
                     RESULT_CANCELED -> { } else -> { }
                 }
             }
+    }
+
+    @SuppressLint("MissingPermission")
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (isPermissionGranted(requestCode, grantResults))
+            mapsViewModel.updateCurrentLocation()
+        else {
+            // permissions denied, so use a default location
+            mapsViewModel.currentLocation.value = Location("Default").apply {
+                latitude = 52.245696
+                longitude = -7.139102
+            }
+        }
+        Timber.i("LOC : %s", mapsViewModel.currentLocation.value)
     }
 
 

@@ -64,7 +64,7 @@ class EventListViewModel : ViewModel() {
 
     fun delete(userid: String, eventid: String, petLocationid: String) {
         try {
-            //DonationManager.delete(userid,id)
+            //petLocationManager.delete(userid,id)
             FirebaseDBManager.delete(userid,eventid)
             Timber.i("Report Delete Success")
         }

@@ -51,9 +51,9 @@ class PetLocationDetailFragment : Fragment() {
     var imageLoad: Boolean = false
     var events: MutableList<NewEvent>? = null
     var testing: Boolean = false
-    var petLocationCategory = "" // Current petLocation type
+    var petLocationCategory = ""
     var image: String = ""
-    val petLocationCategorys = arrayOf("Show All", "Hotel", "Pet Shop", "Outdoor Area", "Bar/Restaurant") // Creating array of different petLocation types
+    val petLocationCategorys = arrayOf("Show All", "Hotel", "Pet Shop", "Outdoor Area", "Bar/Restaurant")
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?
@@ -74,17 +74,16 @@ class PetLocationDetailFragment : Fragment() {
             }
         })
 
-        println("this is currentPetLocation2 $currentPetLocation")
 
         var test = detailViewModel.getPetLocation(loggedInViewModel.liveFirebaseUser.value?.uid!!,
-            args.petLocationid)
+            args.petlocationid)
         println("this is test $test")
 
         setupMenu()
 
         fragBinding.btnGoToEvents.setOnClickListener {
             val action = PetLocationDetailFragmentDirections.actionPetLocationDetailFragmentToEventListFragment(
-                args.petLocationid
+                args.petlocationid
             )
             findNavController().navigate(action)
         }
@@ -144,7 +143,7 @@ class PetLocationDetailFragment : Fragment() {
             }
 
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(ie.setu.pupplan.R.menu.menu_petlocation_detail, menu)
+                menuInflater.inflate(ie.setu.pupplan.R.menu.menu_location_detail, menu)
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
@@ -162,25 +161,25 @@ class PetLocationDetailFragment : Fragment() {
                                 println("tell me imageUriValue ${FirebaseImageManager.imageUriPetLocation.value.toString()}")
                             }
                             detailViewModel.updatePetLocation(loggedInViewModel.liveFirebaseUser.value?.uid!!,
-                                args.petLocationid, PetLocationModel(uid = args.petLocationid, title = fragBinding.petLocationTitle.text.toString(), description = fragBinding.description.text.toString(), category = petLocationCategory,
+                                args.petlocationid, PetLocationModel(uid = args.petlocationid, title = fragBinding.petLocationTitle.text.toString(), description = fragBinding.description.text.toString(), category = petLocationCategory,
                                     email = loggedInViewModel.liveFirebaseUser.value?.email!!, events = events, profilePic = FirebaseImageManager.imageUri.value.toString(), image = image))
                             println("tell me image $image")
                         }
-                        findNavController().navigate(ie.setu.pupplan.R.id.action_petLocationDetailFragment_to_petLocationListFragment)
+                        findNavController().navigate(R.id.action_petLocationDetailFragment_to_petLocationListFragment)
                     }
 
-                    ie.setu.pupplan.R.id.item_petLocation_delete -> {
+                    R.id.item_petLocation_delete -> {
                         events?.forEach {
                             detailViewModel.removeFavourite(loggedInViewModel.liveFirebaseUser.value?.uid!!, it.eventId)
                         }
-                        detailViewModel.deletePetLocation(loggedInViewModel.liveFirebaseUser.value?.uid!!, args.petLocationid)
+                        detailViewModel.deletePetLocation(loggedInViewModel.liveFirebaseUser.value?.uid!!, args.petlocationid)
                         findNavController().navigate(ie.setu.pupplan.R.id.action_petLocationDetailFragment_to_petLocationListFragment)
 
                     }
 
-                    ie.setu.pupplan.R.id.item_goToEvents -> {
+                    R.id.item_goToEvents -> {
                         val action = PetLocationDetailFragmentDirections.actionPetLocationDetailFragmentToEventListFragment(
-                            args.petLocationid
+                            args.petlocationid
                         )
                         findNavController().navigate(action)
                     }
@@ -221,7 +220,7 @@ class PetLocationDetailFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         detailViewModel.getPetLocation(loggedInViewModel.liveFirebaseUser.value?.uid!!,
-            args.petLocationid)
+            args.petlocationid)
         println("onResume is used")
 
     }

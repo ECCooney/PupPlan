@@ -5,7 +5,7 @@
     android:id="@+id/aboutFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/color_primary"
+    android:background="@color/teal_200"
     tools:context=".ui.about.AboutFragment">
 
 
@@ -19,7 +19,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.223"
-        app:srcCompat="@drawable/aboutus_homer" />
+        app:srcCompat="@drawable/login_image" />
 
     <TextView
         android:id="@+id/tvAboutUs"

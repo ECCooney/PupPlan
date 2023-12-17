@@ -58,11 +58,6 @@ class PetLocationAdapter constructor(private var petLocations: ArrayList<PetLoca
             if (petLocation.image.isNotEmpty()) {
                 Picasso.get().load(petLocation.image).resize(200,200).into(binding.imageIcon)
             }
-            Picasso.get().load(petLocation.profilePic.toUri())
-                .resize(200, 200)
-                .transform(customTransformation())
-                .centerCrop()
-                .into(binding.profilePic)
             binding.root.setOnClickListener { listener.onPetLocationClick(petLocation) }
             binding.executePendingBindings()
         }
