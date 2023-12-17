@@ -24,6 +24,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ie.setu.pupplan.adapters.PetLocationAdapter
 import ie.setu.pupplan.adapters.PetLocationClickListener
@@ -63,9 +64,9 @@ class PetLocationListFragment : Fragment(), PetLocationClickListener {
         setupMenu()
         loader = createLoader(requireActivity())
 
-        fragBinding.recyclerView.layoutManager = LinearLayoutManager(activity)
+        fragBinding.recyclerView.layoutManager = GridLayoutManager(activity, 2)
         //petLocationListViewModel = ViewModelProvider(this).get(PetLocationListViewModel::class.java)
-        showLoader(loader,"Downloading PetLocations")
+        showLoader(loader,"Download Locations")
         petLocationListViewModel.observablePetLocationsList.observe(viewLifecycleOwner, Observer {
                 petLocations ->
             petLocations?.let {
@@ -142,7 +143,7 @@ class PetLocationListFragment : Fragment(), PetLocationClickListener {
             }
 
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.menu_petlocation_list, menu)
+                menuInflater.inflate(R.menu.menu_location_list, menu)
 
                 val item = menu.findItem(R.id.togglePetLocations) as MenuItem
                 item.setActionView(R.layout.togglebutton_layout)
@@ -195,7 +196,7 @@ class PetLocationListFragment : Fragment(), PetLocationClickListener {
     fun setSwipeRefresh() {
         fragBinding.swiperefresh.setOnRefreshListener {
             fragBinding.swiperefresh.isRefreshing = true
-            showLoader(loader,"Downloading PetLocations")
+            showLoader(loader,"Download Locations")
             if (petLocationListViewModel.readOnly.value!!) {
                 petLocationListViewModel.loadAll()
             } else {
@@ -211,7 +212,7 @@ class PetLocationListFragment : Fragment(), PetLocationClickListener {
 
     override fun onResume() {
         super.onResume()
-        showLoader(loader,"Downloading PetLocations")
+        showLoader(loader,"Download Locations")
         loggedInViewModel.liveFirebaseUser.observe(viewLifecycleOwner, Observer { firebaseUser ->
             if (firebaseUser != null) {
                 petLocationListViewModel.liveFirebaseUser.value = firebaseUser

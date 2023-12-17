@@ -47,7 +47,7 @@
         <TextView
             android:id="@+id/filterPetLocationCategorys"
             android:layout_width="match_parent"
-            android:layout_height="102dp"
+            android:layout_height="38dp"
             android:layout_margin="8dp"
             android:fontFamily="@font/oswald"
             android:text="@string/petLocation_filter_label"
@@ -124,7 +124,6 @@
         android:layout_margin="@dimen/fab_margin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@android:drawable/ic_input_add"
-        android:contentDescription="TODO" />
+        app:srcCompat="@android:drawable/ic_input_add" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

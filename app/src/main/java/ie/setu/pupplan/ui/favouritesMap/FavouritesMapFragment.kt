@@ -164,7 +164,6 @@ class FavouritesMapFragment : Fragment(), GoogleMap.OnMarkerClickListener, OnMap
         favouritesMapViewModel.map.uiSettings.setZoomControlsEnabled(true)
         println("this is favouriteEvents: $favouriteEvents")
         favouritesMapViewModel.map.clear()
-        //process markers for each favourited event
         favouriteEvents.forEach {
             val loc = LatLng(it.lat, it.lng)
             val options = MarkerOptions().title(it.eventTitle).position(loc)

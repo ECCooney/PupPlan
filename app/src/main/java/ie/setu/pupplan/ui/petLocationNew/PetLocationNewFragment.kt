@@ -22,7 +22,7 @@ import ie.setu.pupplan.firebase.FirebaseImageManager
 import ie.setu.pupplan.models.PetLocationModel
 import ie.setu.pupplan.databinding.FragmentPetlocationNewBinding
 import ie.setu.pupplan.ui.auth.LoggedInViewModel
-import ie.setu.pupplan.ui.petLocationList.PetLocationListViewModel
+import ie.setu.pupplan.ui.maps.MapsViewModel
 import ie.setu.pupplan.utils.readImageUri
 import ie.setu.pupplan.utils.showImagePicker
 import timber.log.Timber
@@ -34,6 +34,7 @@ class PetLocationNewFragment : Fragment() {
     private val fragBinding get() = _fragBinding!!
     private lateinit var petLocationViewModel: PetLocationlNewViewModel
     private val loggedInViewModel : LoggedInViewModel by activityViewModels()
+    private val mapsViewModel: MapsViewModel by activityViewModels()
     private lateinit var imageIntentLauncher : ActivityResultLauncher<Intent>
     var petLocationCategory = "" // Current petLocation type
     var image: String = ""
@@ -84,7 +85,7 @@ class PetLocationNewFragment : Fragment() {
                     //findNavController().navigate(R.id.action_petLocationNewFragment_to_petLocationListFragment)
                 }
             }
-            false -> Toast.makeText(context,getString(R.string.donationError),Toast.LENGTH_LONG).show()
+            false -> Toast.makeText(context,getString(R.string.petLocationError),Toast.LENGTH_LONG).show()
         }
     }
 
@@ -119,7 +120,7 @@ class PetLocationNewFragment : Fragment() {
             }
 
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.menu_petlocation_new, menu)
+                menuInflater.inflate(R.menu.menu_location_new, menu)
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
@@ -137,7 +138,8 @@ class PetLocationNewFragment : Fragment() {
                             }
                             println(loggedInViewModel.liveFirebaseUser)
                             petLocationViewModel.addPetLocation(loggedInViewModel.liveFirebaseUser, PetLocationModel(title = fragBinding.petLocationTitle.text.toString(), description = fragBinding.description.text.toString(), category = petLocationCategory,
-                                email = loggedInViewModel.liveFirebaseUser.value?.email!!, profilePic = FirebaseImageManager.imageUri.value.toString(), image = image))
+                                email = loggedInViewModel.liveFirebaseUser.value?.email!!, profilePic = FirebaseImageManager.imageUri.value.toString(), image = image, latitude= mapsViewModel.currentLocation.value!!.latitude,
+                                longitude = mapsViewModel.currentLocation.value!!.longitude))
                             println(petLocationCategory)
                         }
                         findNavController().navigate(R.id.action_petLocationNewFragment_to_petLocationListFragment)

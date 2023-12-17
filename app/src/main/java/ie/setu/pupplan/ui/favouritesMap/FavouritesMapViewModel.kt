@@ -26,10 +26,9 @@ class FavouritesMapViewModel : ViewModel() {
     val observablePetLocationsList: LiveData<List<PetLocationModel>>
         get() = petLocationsList
 
-    //function to load favourites belonging to user
     fun load() {
         try {
-            FirebaseDBManager.findUserUserFavourites(liveFirebaseUser.value?.uid!!,favouritesList)
+            FirebaseDBManager.findUserFavourites(liveFirebaseUser.value?.uid!!,favouritesList)
             FirebaseDBManager.findUserAll(liveFirebaseUser.value?.uid!!,petLocationsList)
             Timber.i("Report Load Success : ${favouritesList.value.toString()}")
         }
@@ -38,11 +37,10 @@ class FavouritesMapViewModel : ViewModel() {
         }
     }
 
-    //function to load favourites belonging to other users
     fun loadAll() {
         try {
 
-            FirebaseDBManager.findUserAllFavourites(liveFirebaseUser.value?.uid!!,favouritesList)
+            FirebaseDBManager.findAllFavourites(liveFirebaseUser.value?.uid!!,favouritesList)
             Timber.i("Report LoadAll Success : ${favouritesList.value.toString()}")
         }
         catch (e: Exception) {

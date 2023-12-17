@@ -69,11 +69,12 @@
                 android:layout_width="121dp"
                 android:layout_height="98dp"
                 android:layout_marginEnd="16dp"
+                android:contentDescription="@string/event_image_placeholder"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:srcCompat="@tools:sample/backgrounds/scenic"
-                android:contentDescription="@string/event_image_placeholder" />
+                tools:src="@tools:sample/backgrounds/scenic"
+                tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
             <TextView
                 android:id="@+id/currentTitle"

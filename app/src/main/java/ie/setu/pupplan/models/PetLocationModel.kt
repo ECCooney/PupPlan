@@ -10,11 +10,13 @@ import kotlinx.parcelize.Parcelize
 data class PetLocationModel(var uid: String? = "",
                          var title: String = "",
                          var description: String = "",
+                         var latitude: Double = 00.00,
+                         var longitude: Double = 00.00,
                          var category: String = "",
                          var events: MutableList<NewEvent>? = null,
                          var image: String = "", 
                          var profilePic: String = "",
-                        val email: String? = "user@pupplan.com",
+                         val email: String? = "user@pupplan.com",
 ): Parcelable
 
 {
@@ -24,6 +26,8 @@ data class PetLocationModel(var uid: String? = "",
             "uid" to uid,
             "title" to title,
             "description" to description,
+            "latitude" to latitude,
+            "longitude" to longitude,
             "category" to category,
             "image" to image,
             "email" to email,
